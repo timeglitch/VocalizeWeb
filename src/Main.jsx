@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Container, Button, Nav } from 'react-bootstrap';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { applyWindow, lpc, drawSpectralEnvelope } from './lpcUtils';
 
 // Add this helper to parse query params
@@ -23,7 +23,7 @@ export default function Main() {
         if (audioElementRef.current) {
             audioElementRef.current.playbackRate = newRate;
         }
-       setCurrSpeed(newRate);
+        setCurrSpeed(newRate);
     };
 
     //TODO: Make firefox compatible
@@ -249,11 +249,11 @@ export default function Main() {
         } else if (typeof stim === 'object' && Array.isArray(stim)) {
             let hstart;
             let hend;
-            if (typeof(stim[1]) === 'number') {
+            if (typeof (stim[1]) === 'number') {
                 hstart = stim[1];
                 hend = hstart + 1;
             }
-            else if (typeof(stim[1]) === 'object' && Array.isArray(stim[1])) {
+            else if (typeof (stim[1]) === 'object' && Array.isArray(stim[1])) {
                 hstart = stim[1][0];
                 hend = stim[1][1];
             } else {
@@ -275,8 +275,6 @@ export default function Main() {
             startCapture();
         }
     }, [selectedVowel
-
-
 
     ]);
 
@@ -352,91 +350,85 @@ export default function Main() {
     }, [audioBuffer, lpcOrder]);
 
     return (
-        <div className="main-container" style={{ backgroundColor: '#dde5b6', width: '100vw', height: '100vh' }}> 
-        <Container className="main">
-            <Nav className="navbar"></Nav>
-            <h1 className="header" style={styles.header}>LPC Analysis</h1>
-            {/* Show selected submodule */}
-            <div style={styles.submodule}>
-                Submodule: {selectedSubmodule}
-            </div>
-            <div className="vowel-selector" style={{ marginBottom: '1rem' }}>
-                <label htmlFor="vowelSelect" style={styles.vowelContainer}>Vowel:</label>
-                <select
-                    id="vowelSelect"
-                    value={selectedVowel}
-                    style={styles.vowelSelect}
-                    onChange={e => setSelectedVowel(e.target.value)}
-                >
-                    {vowels.map(v => (
-                        <option key={v.value} value={v.value}>{v.label}</option>
-                    ))}
-                </select>
-            </div>
-            {/* Stimulus display section */}
-            <div className="stimulus-section" style={styles.submodule}>
-                Say:&nbsp;
-                {selectedStimulus ? (
-                    <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
-                ) : (
-                    <span style={{ color: '#9ca3af' }}>No stimulus available</span>
-                )}
-            </div>
-            {/* --- Playback UI & LPC analysis button --- */}
-            {audioURL && (
-                <div style={styles.buttons}>
-                    <audio controls src={audioURL} ref={audioElementRef} />
-                    <div style={{ fontSize: '0.9rem', color: '#4299e1', marginTop: '0.5rem' }}>
-                        Playback your recording above.
-                    </div>
-                <div className="toggle-speed" style={styles.buttons}>
-                <label htmlFor="speedSelect">Playback Speed:</label>
-                <select
-                    id="speedSelect"
-                    value={currSpeed}
-                    onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))}
-                >
-                    {speeds.map(s => (
-                        <option key={s} value={s}>{s}x</option>
-                    ))}
-                </select>
-            </div>
+        <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
+            <Container className="main">
+                <Nav className="navbar"></Nav>
+                <h1 className="header" style={styles.header}>Practice</h1>
+                {/* Show selected submodule */}
+                <div style={styles.submodule}>
+                    Submodule: {selectedSubmodule}
                 </div>
-            )}
-            <div className="canvas-container" style={styles.canvasContainer}>
-                <canvas ref={canvasRef} className="canvas" />
-            </div>
-            <div className="controls">
-                <Button variant="primary" onClick={startButton}>
-                    {rec ? 'Stop' : 'Start'} Capture Audio
-                </Button>
-            </div>
-            <div className="lpc-order" stlyes={styles.canvasContainer}>
-                <label htmlFor="lpcOrder">LPC Order:</label>
-                <input
-                    type="number"
-                    id="lpcOrder"
-                    value={lpcOrder}
-                    onChange={(e) => setLpc(e.target.value)}
-                    min="1"
-                    max="30"
-                />
-            </div>
+                {/* Stimulus display section */}
+                <div className="stimulus-section" style={styles.submodule}>
+                    Say:&nbsp;
+                    <div className="vowel-selector" style={{ marginTop: '0.5rem' }}>
+                    <select
+                        id="vowelSelect"
+                        value={selectedVowel}
+                        style={styles.vowelSelect}
+                        onChange={e => setSelectedVowel(e.target.value)}
+                    >
+                        {vowels.map(v => (
+                            <option key={v.value} value={v.value}>{v.label}</option>
+                        ))}
+                    </select>
+                </div>
+                                   
+                </div>
+                {/* --- Playback UI & LPC analysis button --- */}
+                {audioURL && (
+                    <div style={styles.audioPlayer}>
+                        <audio controls src={audioURL} ref={audioElementRef} />
+                        <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
+                            Playback your recording above.
+                        </div>
+                        <div className="toggle-speed" style={{color: '#f0ead2'}}>
+                            <label htmlFor="speedSelect">Playback Speed:</label>
+                            <select
+                                id="speedSelect"
+                                value={currSpeed}
+                                onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))}
+                            >
+                                {speeds.map(s => (
+                                    <option key={s} value={s}>{s}x</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                )}
+                <div className="canvas-container" style={styles.canvasContainer}>
+                    <canvas ref={canvasRef} className="canvas" />
+                </div>
+                <div className="controls">
+                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
+                        {rec ? 'Stop' : 'Start'} Capture Audio
+                    </Button>
+                </div>
+                <div className="lpc-order" stlyes={styles.canvasContainer}>
+                    <label htmlFor="lpcOrder">LPC Order:</label>
+                    <input
+                        type="number"
+                        id="lpcOrder"
+                        value={lpcOrder}
+                        onChange={(e) => setLpc(e.target.value)}
+                        min="1"
+                        max="30"
+                    />
+                </div>
 
-        </Container>
+            </Container>
         </div>
     )
 }
 
 const styles = StyleSheet.create({
     main: {
-        backgroundColor: '#dde5b6',
-        color: '#6c584c',
+        color: '#05668d',
     },
-      header: {
+    header: {
         textAlign: 'center',
         marginBottom: '1rem',
-        backgroundColor: '#6c584c',
+        backgroundColor: '#05668d',
         color: '#f0ead2',
         fontSize: '2rem',
         fontWeight: 'bold',
@@ -444,19 +436,19 @@ const styles = StyleSheet.create({
     submodule: {
         textAlign: 'center',
         marginBottom: '1rem',
-        backgroundColor: '#adc178',
-        color: '#6c584c',
+        backgroundColor: '#05668d',
+        color: '#f0ead2',
         fontSize: '1.25rem',
         fontWeight: 'bold',
-        padding: '1rem',
-       
+        boxShadow: '0 4px 15px rgb(0, 57, 51)',
 
+        padding: '1rem',
     },
     vowelContainer: {
         padding: '0.25rem',
         borderRadius: '0.25rem',
-        backgroundColor: '#f0ead2',
-        color: '#6c584c',
+        backgroundColor: '#05668d',
+        color: '#f0ead2',
         fontSize: '1.5rem',
     },
     vowelSelect: {
@@ -465,23 +457,30 @@ const styles = StyleSheet.create({
         borderRadius: '0.25rem',
         border: '1px solid #6c584c',
         backgroundColor: '#f0ead2',
-        color: '#6c584c',
+        color: '#05668d',
         fontSize: '1.5rem',
     },
     buttons: {
-        buttonBg: '#6c584c',
-        buttonText: '#f0ead2',
-        buttonHoverBg: '#f0ead2',
-        buttonHoverText: '#6c584c',
+        backgroundColor: '#f0ead2',
+        color: '#05668d',
+        hover: '#f0ead2',
     },
     canvasContainer: {
         fontSize: '1rem',
-        color: '#6c584c',
+        color: '#05668d',
         fontWeight: 'bold',
         padding: '1rem',
         textAlign: 'center',
 
-    }
+    },
+    audioPlayer: {
+        padding: '0.25rem',
+        borderRadius: '0.25rem',
+        backgroundColor: '#05668d',
+        color: '#f0ead2',
+        fontSize: '1rem'
+    },
+    
 
 });
 

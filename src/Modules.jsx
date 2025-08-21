@@ -12,6 +12,14 @@ export default function Modules() {
                 variant="success"
                 style={styles.button}
                 onClick={() => navigate('/VowelSubmodules')}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.hover.backgroundColor;
+                    e.currentTarget.style.color = styles.button.hover.color;
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.backgroundColor;
+                    e.currentTarget.style.color = styles.button.color;
+                }}
             >
                 Vowel
             </Button>
@@ -19,6 +27,14 @@ export default function Modules() {
                 variant="success"
                 style={styles.button}
                 onClick={() => navigate('/StressSubmodules')}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.hover.backgroundColor;
+                    e.currentTarget.style.color = styles.button.hover.color;
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.backgroundColor;
+                    e.currentTarget.style.color = styles.button.color;
+                }}
             >
                 Stress
             </Button>
@@ -33,25 +49,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'column',
         height: '100vh',
-        backgroundColor: '#080133',
-        
+        backgroundColor: '#05668d',
+
     },
     text: {
         fontSize: '3rem',
         marginBottom: '20px',
-        color: '#FFFFFF',
+        color: '#f0f3bd',
         fontWeight: 'bold',
     },
     button: {
         fontSize: '2rem',
         padding: '20px 40px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#f0f3bd',
         border: 'none',
         borderRadius: '5px',
-        color: '#080133',
+        color: '#05668d',
         cursor: 'pointer',
         fontWeight: 'bold',
         marginVertical: 10,
         marginBottom: 20,
+        hover: {
+            backgroundColor: '#00a896',
+            color: '#f0f3bd',
+        }
     },
 });

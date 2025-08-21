@@ -7,7 +7,19 @@ export default function Home() {
   return (
     <div className="home" style={styles.home}>
       <Text style={styles.txt}>VOCAL-ize</Text>
-      <Button variant="success" style={styles.button} onClick={() => navigate('/Modules')}>
+      <Button
+        variant="success"
+        style={styles.button}
+        onClick={() => navigate('/Modules')}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = styles.button.hover.backgroundColor;
+          e.currentTarget.style.color = styles.button.hover.color;
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = styles.button.backgroundColor;
+          e.currentTarget.style.color = styles.button.color;
+        }}
+      >
         Start
       </Button>
     </div>
@@ -15,30 +27,34 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    home: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        height: '100vh',
-        backgroundColor: '#080133',
-    },
-    txt: {
-        fontSize: '3rem',
-        marginBottom: '20px',
-        color: '#FFFFFF',  
-        fontWeight: 'bold',
-      
-    },
-    button: {
-        fontSize: '2rem',
-        padding: '20px 40px',
-        backgroundColor: '#FFFFFF',
-        border: 'none',
-        borderRadius: '5px',
-        color: '#080133',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-    },
-    
+  home: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    height: '100vh',
+    backgroundColor: '#05668d',
+  },
+  txt: {
+    fontSize: '3rem',
+    marginBottom: '20px',
+    color: '#f0f3bd',
+    fontWeight: 'bold',
+
+  },
+  button: {
+    fontSize: '2rem',
+    padding: '20px 40px',
+    backgroundColor: '#f0f3bd',
+    border: 'none',
+    borderRadius: '5px',
+    color: '#05668d',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    hover: {
+      backgroundColor: '#00a896',
+      color: '#f0f3bd',
+    }
+  },
+
 });

@@ -18,12 +18,12 @@ export default function VowelSubmodules() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#080133',
+        background: '#05668d',
       }}
     >
       <div
         style={{
-          background: '#1a202c',
+          background: '#05668d',
           borderRadius: '0.75rem',
           boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
           padding: '2.5rem 2rem',
@@ -38,7 +38,7 @@ export default function VowelSubmodules() {
             marginBottom: 24,
             fontWeight: 700,
             fontSize: '2.5rem',
-            color: '#FFFFFF',
+            color: '#f0f3bd',
             letterSpacing: '1px',
             textAlign: 'center',
           }}
