@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { loadWavFile } from './audioUtils';
 import { Container, Button, Nav } from 'react-bootstrap';
 import { StyleSheet } from 'react-native';
 import { applyWindow, lpc, drawSpectralEnvelope } from './lpcUtils';
@@ -52,6 +53,8 @@ export default function Main() {
     const [audioURL, setAudioURL] = useState(null);
     const audioElementRef = useRef(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
+    const [wavBuffer, setWavBuffer] = useState(null);
+    const wavAudioRef = useRef(null);
 
     const vowelstimuli = require('./VowelStimuli.json');
 
@@ -74,6 +77,8 @@ export default function Main() {
         return () =>
             window.removeEventListener('resize', resizeCanvas); // cleanup on unmoun
     }, []);
+
+    // Functions for live audio processing, recording, and playback with visuals of user speech
 
     // event listener for the start button
     const startButton = () => {
@@ -338,6 +343,76 @@ export default function Main() {
         };
     }, [audioBuffer, lpcOrder]);
 
+
+    // Functions for loading and playing the correct stimulus audio
+
+    // Load the wav file on mount
+    //TODO: load the wav file on stimulus change
+    useEffect(() => {
+        let isMounted = true;
+        const loadWav = async () => {
+            try {
+                const ctx = audioCtx.current || new (window.AudioContext || window.webkitAudioContext)();
+                const buffer = await loadWavFile(process.env.PUBLIC_URL + '/audio/palabra.wav', ctx);
+                if (isMounted) setWavBuffer(buffer);
+            } catch (e) {
+                console.error('Failed to load wav:', e);
+            }
+        };
+        loadWav();
+        return () => { isMounted = false; };
+    }, []);
+    
+    // Animate LPC canvas during wav playback
+    useEffect(() => {
+        const audioEl = wavAudioRef.current;
+        if (!audioEl || !wavBuffer) return;
+        let rafId = null;
+        const updateLPC = () => {
+            if (!audioEl.paused && !audioEl.ended) {
+                const sr = wavBuffer.sampleRate;
+                const pos = Math.floor(audioEl.currentTime * sr);
+                const windowSize = 2048;
+                let samples;
+                if (pos + windowSize < wavBuffer.length) {
+                    samples = wavBuffer.getChannelData(0).slice(pos, pos + windowSize);
+                } else {
+                    samples = wavBuffer.getChannelData(0).slice(wavBuffer.length - windowSize);
+                }
+                const windowed = applyWindow(samples);
+                const { a } = lpc(windowed, lpcOrder);
+                if (a && ctxRef.current && canvasRef.current) {
+                    drawSpectralEnvelope({
+                        lpcCoefficients: a,
+                        sampleRate: sr,
+                        canvasContext: ctxRef.current,
+                        vowelStimuli: vowelstimuli,
+                        selectedVowel
+                    });
+                }
+                rafId = requestAnimationFrame(updateLPC);
+            }
+        };
+        const startRaf = () => {
+            if (!rafId) rafId = requestAnimationFrame(updateLPC);
+        };
+        const stopRaf = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+        };
+        audioEl.addEventListener('play', startRaf);
+        audioEl.addEventListener('pause', stopRaf);
+        audioEl.addEventListener('ended', stopRaf);
+        return () => {
+            stopRaf();
+            audioEl.removeEventListener('play', startRaf);
+            audioEl.removeEventListener('pause', stopRaf);
+            audioEl.removeEventListener('ended', stopRaf);
+        };
+    }, [wavBuffer, lpcOrder, selectedVowel]);
+    // Remove old handleWavPlay usage from <audio>
+
+
     return (
         <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
             <Container className="main">
@@ -349,6 +424,15 @@ export default function Main() {
                 </div>
                 {/* Stimulus display section */}
                 <div className="stimulus-section" style={styles.submodule}>
+                    {/* Audio controls for wav file */}
+                    <div style={{ marginBottom: '1rem' }}>
+                        <audio
+                            ref={wavAudioRef}
+                            src={process.env.PUBLIC_URL + '/audio/palabra.wav'}
+                            controls
+                        />
+                        <div style={{ color: '#f0ead2', fontSize: '0.9rem' }}>Stimulus: palabra.wav</div>
+                    </div>
                     Say:&nbsp;
                     {selectedStimulus ? (
                     <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
