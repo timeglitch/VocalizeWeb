@@ -86,7 +86,6 @@ export default function Main() {
         }
         setRec(r => !r);
         setIsActive(is => !is);
-        //rec ? stopCapture() : startCapture();
     };
 
     // start audio capture and recording
@@ -213,13 +212,6 @@ export default function Main() {
         return () => clearInterval(tim)
     }, [isActive, timeElapsed, prog]);
 
-    const timeFormatter = (sec) => {
-        const remainingTime = sec % 60;
-        return `${Math.floor(sec / 60)}:${remainingTime < 10 ? '0' : ''}${remainingTime}`;
-    };
-
-
-
     // TODO: create hamburger menu for navigation s.t. when the user clicks on it, it opens a side menu with the different vowels
     // and when they press a specific vowel, it changes the canvas to show the spectral envelope for that vowel
     // Vowel selector state
@@ -260,7 +252,6 @@ export default function Main() {
                 console.error("Error: Invalid stimulus format: highlighted segment indexes unrecognized", stim);
             }
 
-            // Replace <highlight> tags with a span for visual highlighting
             setSelectedStimulus(
                 `${stim[0].slice(0, hstart)}<span style="background: #ffe066; color: #222; padding: 0 2px;">${stim[0].slice(hstart, hend)}</span>${stim[0].slice(hend)}`
             ); //TODO: injecting the highlighting in this way is probably not the best way, but it works for now
@@ -274,9 +265,7 @@ export default function Main() {
             stopCapture();
             startCapture();
         }
-    }, [selectedVowel
-
-    ]);
+    }, [selectedVowel]);
 
     // Update submodule if URL changes
     useEffect(() => {
@@ -361,6 +350,12 @@ export default function Main() {
                 {/* Stimulus display section */}
                 <div className="stimulus-section" style={styles.submodule}>
                     Say:&nbsp;
+                    {selectedStimulus ? (
+                    <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
+                    ) : (
+                    <span style={{ color: '#9ca3af' }}>No stimulus available</span>
+                    )}
+
                     <div className="vowel-selector" style={{ marginTop: '0.5rem' }}>
                     <select
                         id="vowelSelect"
