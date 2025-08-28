@@ -16,14 +16,14 @@ export default function StressSubmodules() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#080133',
+        backgroundColor: '#05668d',
       }}
     >
       <div
         style={{
-          background: '#1a202c',
+          background: '#05668d',
           borderRadius: '0.75rem',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 15px rgb(0, 57, 51)',
           padding: '2.5rem 2rem',
           minWidth: 340,
           display: 'flex',
@@ -36,7 +36,7 @@ export default function StressSubmodules() {
             marginBottom: 24,
             fontWeight: 700,
             fontSize: '2.5rem',
-            color: '#FFFFFF',
+            color: '#f0ead2',
             letterSpacing: '1px',
             textAlign: 'center',
           }}

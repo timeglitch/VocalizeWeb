@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { loadWavFile } from './audioUtils';
-import { Container, Button, Nav } from 'react-bootstrap';
+import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootstrap';
+import { ReactComponent as Logo } from "./logo.svg";
 import { StyleSheet } from 'react-native';
 import { applyWindow, lpc, drawSpectralEnvelope } from './lpcUtils';
 
@@ -362,7 +363,7 @@ export default function Main() {
         loadWav();
         return () => { isMounted = false; };
     }, []);
-    
+
     // Animate LPC canvas during wav playback
     useEffect(() => {
         const audioEl = wavAudioRef.current;
@@ -412,11 +413,120 @@ export default function Main() {
     }, [wavBuffer, lpcOrder, selectedVowel]);
     // Remove old handleWavPlay usage from <audio>
 
+    // Offcanvas (hamburger menu) state
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     return (
         <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
             <Container className="main">
-                <Nav className="navbar"></Nav>
+                <Navbar bg="#05668d" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
+                    <Navbar.Brand
+                        style={{
+                            fontWeight: 'bold', fontSize: '1rem', color: '#f0ead2', cursor: 'pointer', padding: '0.5rem', boxShadow: '0 4px 15px rgb(0, 57, 51)'
+                        }}
+                        onClick={handleShow}
+                    >
+                        <Logo
+                            alt=""
+                            width="1.5rem"
+                            height="1.5rem"
+                            className="d-inline-block align-top"
+                            style={{
+                                marginRight: '10px',
+                                backgroundColor: '#f0ead2',
+                                borderRadius: '5px',
+                                padding: '2px',
+                            }}
+                        />
+                        <NavItem style={{ display: 'inline', color: '#f0ead2', fontSize: '1rem' }}>Submodules</NavItem>
+                    </Navbar.Brand>
+                    <Navbar.Toggle onClick={handleShow} aria-controls="offcanvasNavbar" />
+                </Navbar>
+
+                <Offcanvas show={show} onHide={handleClose} placement="start" style={styles.offcanva}>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>Menu</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <Nav className="flex-column">
+                            <Nav.Link href="../Main?submodule=Segment" onClick={handleClose} style={styles.ofLinks}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}
+                            >
+                                Segment
+                            </Nav.Link>
+                            <Nav.Link href="../Main?submodule=Syllable" onClick={handleClose} style={styles.ofLinks}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}>
+                                Syllable
+                            </Nav.Link>
+                            <Nav.Link href="../Main?submodule=Word" onClick={handleClose} style={styles.ofLinks}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}>
+                                Word
+                            </Nav.Link>
+                            <Nav.Link href="../Main?submodule=Phrase" onClick={handleClose} style={styles.ofLinks}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}>
+                                Phrase
+                            </Nav.Link>
+                            <Nav.Link href="../Main?submodule=Sentence" onClick={handleClose} style={styles.ofLinks}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}>
+                                Sentence
+                            </Nav.Link>
+                            <Nav.Link href="../Modules" onClick={handleClose} style={{ ...styles.ofLinks, fontWeight: 'bold' }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.hover.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.color = styles.ofLinks.color;
+                                    e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+                                }}>
+                                Back to Modules
+                            </Nav.Link>
+                        </Nav>
+                    </Offcanvas.Body>
+                </Offcanvas>
+
+
+
+
+
+
                 <h1 className="header" style={styles.header}>Practice</h1>
                 {/* Show selected submodule */}
                 <div style={styles.submodule}>
@@ -435,24 +545,24 @@ export default function Main() {
                     </div>
                     Say:&nbsp;
                     {selectedStimulus ? (
-                    <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
+                        <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
                     ) : (
-                    <span style={{ color: '#9ca3af' }}>No stimulus available</span>
+                        <span style={{ color: '#9ca3af' }}>No stimulus available</span>
                     )}
 
                     <div className="vowel-selector" style={{ marginTop: '0.5rem' }}>
-                    <select
-                        id="vowelSelect"
-                        value={selectedVowel}
-                        style={styles.vowelSelect}
-                        onChange={e => setSelectedVowel(e.target.value)}
-                    >
-                        {vowels.map(v => (
-                            <option key={v.value} value={v.value}>{v.label}</option>
-                        ))}
-                    </select>
-                </div>
-                                   
+                        <select
+                            id="vowelSelect"
+                            value={selectedVowel}
+                            style={styles.vowelSelect}
+                            onChange={e => setSelectedVowel(e.target.value)}
+                        >
+                            {vowels.map(v => (
+                                <option key={v.value} value={v.value}>{v.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
                 </div>
                 {/* --- Playback UI & LPC analysis button --- */}
                 {audioURL && (
@@ -461,7 +571,7 @@ export default function Main() {
                         <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                             Playback your recording above.
                         </div>
-                        <div className="toggle-speed" style={{color: '#f0ead2'}}>
+                        <div className="toggle-speed" style={{ color: '#f0ead2' }}>
                             <label htmlFor="speedSelect">Playback Speed:</label>
                             <select
                                 id="speedSelect"
@@ -559,7 +669,21 @@ const styles = StyleSheet.create({
         color: '#f0ead2',
         fontSize: '1rem'
     },
-    
+    offcanva: {
+        backgroundColor: '#028090',
+        color: '#f0ead2'
+    },
+    ofLinks: {
+        color: '#f0ead2',
+        backgroundColor: '#028090',
+        fontSize: '1rem',
+        marginBottom: '0.5rem',
+        // hover effect
+        hover: {
+            color: '#05668d', backgroundColor: '#f0ead2'
+
+        }
+    }
 
 });
 
