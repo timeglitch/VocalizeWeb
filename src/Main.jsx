@@ -522,26 +522,21 @@ export default function Main() {
                     </Offcanvas.Body>
                 </Offcanvas>
 
-
-
-
-
-
                 <h1 className="header" style={styles.header}>Practice</h1>
                 {/* Show selected submodule */}
                 <div style={styles.submodule}>
                     Submodule: {selectedSubmodule}
                 </div>
+
                 {/* Stimulus display section */}
                 <div className="stimulus-section" style={styles.submodule}>
                     {/* Audio controls for wav file */}
-                    <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ marginBottom: '0rem' }}>
                         <audio
                             ref={wavAudioRef}
                             src={process.env.PUBLIC_URL + '/audio/palabra.wav'}
-                            controls
+                            controls hidden
                         />
-                        <div style={{ color: '#f0ead2', fontSize: '0.9rem' }}>Stimulus: palabra.wav</div>
                     </div>
                     Say:&nbsp;
                     {selectedStimulus ? (
@@ -550,7 +545,7 @@ export default function Main() {
                         <span style={{ color: '#9ca3af' }}>No stimulus available</span>
                     )}
 
-                    <div className="vowel-selector" style={{ marginTop: '0.5rem' }}>
+                    <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
                         <select
                             id="vowelSelect"
                             value={selectedVowel}
@@ -562,38 +557,49 @@ export default function Main() {
                             ))}
                         </select>
                     </div>
-
-                </div>
-                {/* --- Playback UI & LPC analysis button --- */}
-                {audioURL && (
-                    <div style={styles.audioPlayer}>
-                        <audio controls src={audioURL} ref={audioElementRef} />
-                        <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
-                            Playback your recording above.
+                    {/* --- Playback UI & LPC analysis button --- */}
+                    {audioURL && (
+                        <div style={styles.audioPlayer}>
+                            <audio controls src={audioURL} ref={audioElementRef} />
+                            <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
+                                Playback your recording above.
+                            </div>
+                            <div className="toggle-speed" style={{ color: '#f0ead2' }}>
+                                <label htmlFor="speedSelect">Playback Speed:</label>
+                                <select
+                                    id="speedSelect"
+                                    value={currSpeed}
+                                    onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))}
+                                >
+                                    {speeds.map(s => (
+                                        <option key={s} value={s}>{s}x</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
-                        <div className="toggle-speed" style={{ color: '#f0ead2' }}>
-                            <label htmlFor="speedSelect">Playback Speed:</label>
-                            <select
-                                id="speedSelect"
-                                value={currSpeed}
-                                onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))}
-                            >
-                                {speeds.map(s => (
-                                    <option key={s} value={s}>{s}x</option>
-                                ))}
-                            </select>
+                    )}
+                    <div className="canvas-container" style={styles.canvasContainer}>
+                        <canvas ref={canvasRef} className="canvas" />
+                    </div>
+                    <div className="controls">
+                        {/* Hear it  */}
+                        <div class="hear" style={{ marginBottom: '0.5rem'}}>
+                            <Button style={{ ...styles.buttons }} value={selectedStimulus} onChange={e => setSelectedStimulus(e.target.value)}
+                                onClick={() => {
+                                    if (wavAudioRef.current) {
+                                        wavAudioRef.current.play();
+                                    }
+                                    console.log(selectedStimulus)
+                                }}>
+                                Hear It
+                            </Button>
                         </div>
                     </div>
-                )}
-                <div className="canvas-container" style={styles.canvasContainer}>
-                    <canvas ref={canvasRef} className="canvas" />
-                </div>
-                <div className="controls">
                     <Button variant="primary" onClick={startButton} style={styles.buttons}>
                         {rec ? 'Stop' : 'Start'} Capture Audio
                     </Button>
                 </div>
-                <div className="lpc-order" stlyes={styles.canvasContainer}>
+                <div className="lpc-order" style={styles.canvasContainer}>
                     <label htmlFor="lpcOrder">LPC Order:</label>
                     <input
                         type="number"
@@ -658,9 +664,7 @@ const styles = StyleSheet.create({
         fontSize: '1rem',
         color: '#05668d',
         fontWeight: 'bold',
-        padding: '1rem',
         textAlign: 'center',
-
     },
     audioPlayer: {
         padding: '0.25rem',
