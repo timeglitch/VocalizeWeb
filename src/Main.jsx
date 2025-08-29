@@ -218,9 +218,6 @@ export default function Main() {
         return () => clearInterval(tim)
     }, [isActive, timeElapsed, prog]);
 
-    // TODO: create hamburger menu for navigation s.t. when the user clicks on it, it opens a side menu with the different vowels
-    // and when they press a specific vowel, it changes the canvas to show the spectral envelope for that vowel
-    // Vowel selector state
     const [selectedVowel, setSelectedVowel] = useState('a'); //when selectedVowel changes, the canvas should update to show the spectral envelope for that vowel, and the stimulus should change to a random one from the list of stimuli for that vowel
     const vowels = [
         { label: '[a]', value: 'a' },
@@ -233,6 +230,7 @@ export default function Main() {
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
     // Add state for stimulus
     const [selectedStimulus, setSelectedStimulus] = useState(null);
+    const [matchingStimulus, setMatchingStimulus] = useState(null);
 
     //update stimulus and graph when vowel changes
     useEffect(() => {
@@ -272,6 +270,24 @@ export default function Main() {
             startCapture();
         }
     }, [selectedVowel]);
+
+    // // Match selected stimulus to speaker recording
+    // useEffect(() => {
+    //     if (!selectedStimulus) {
+    //         setMatchingStimulus(null);
+    //     }
+    //     else if (typeof selectedStimulus == 'string') {
+    //         // remove highlighting span tags
+    //         let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "")
+    //         console.log("Matching stimulus to:", stimTrim)
+    //         // match to wav file in ../audio/
+    //         setMatchingStimulus(wavAudioRef.current ? process.env.PUBLIC_URL + '/audio/L1_Spanish_' + stimTrim + '.wav' : null);
+    //         console.log("Matched stimulus to:", matchingStimulus)
+    //     } 
+    //     else {
+    //         setMatchingStimulus(null);
+    //     }
+    // })
 
     // Update submodule if URL changes
     useEffect(() => {
@@ -352,17 +368,27 @@ export default function Main() {
     useEffect(() => {
         let isMounted = true;
         const loadWav = async () => {
+            if (!selectedStimulus) return;
             try {
                 const ctx = audioCtx.current || new (window.AudioContext || window.webkitAudioContext)();
-                const buffer = await loadWavFile(process.env.PUBLIC_URL + '/audio/palabra.wav', ctx);
-                if (isMounted) setWavBuffer(buffer);
+                let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "")
+                const url = '/audio/' + stimTrim + ".wav";
+                console.log("Loading wav file:", url);
+                const buffer = await loadWavFile(url, ctx);
+                if (isMounted) { 
+                    setWavBuffer(buffer);
+                    if (wavAudioRef.current) {
+                        wavAudioRef.current.src = url;
+                        console.log('Wav file loaded successfully'); 
+                    }
+                }
             } catch (e) {
                 console.error('Failed to load wav:', e);
             }
         };
-        loadWav();
-        return () => { isMounted = false; };
-    }, []);
+        loadWav().catch((e=>console.error("uncaught promise ", e)));
+        return () => { isMounted = false};
+    }, [selectedStimulus]);
 
     // Animate LPC canvas during wav playback
     useEffect(() => {
@@ -582,14 +608,13 @@ export default function Main() {
                         <canvas ref={canvasRef} className="canvas" />
                     </div>
                     <div className="controls">
-                        {/* Hear it  */}
+                        {/* Hear native speaker's recording  */}
                         <div class="hear" style={{ marginBottom: '0.5rem'}}>
-                            <Button style={{ ...styles.buttons }} value={selectedStimulus} onChange={e => setSelectedStimulus(e.target.value)}
+                            <Button style={{ ...styles.buttons }}
                                 onClick={() => {
                                     if (wavAudioRef.current) {
                                         wavAudioRef.current.play();
                                     }
-                                    console.log(selectedStimulus)
                                 }}>
                                 Hear It
                             </Button>
