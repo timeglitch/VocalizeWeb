@@ -16,16 +16,37 @@ function randint(n) {
     return Math.floor(Math.random() * n);
 }
 
-export default function Main() {
+export function PlaybackSpeed({currSpeed, onChange, speeds}) {
+ return (
+        <div className="toggle-speed" style={{ color: '#f0ead2' }}>
+            <label htmlFor="speedSelect">Playback Speed:</label>
+            <select 
+                id="speedSelect" 
+                value={currSpeed} 
+                onChange={onChange}
+                style={{ marginLeft: '0.5rem' }}
+            >
+                {speeds.map(s => (
+                    <option key={s} value={s}>{s}x</option>
+                ))}
+            </select>
+        </div>
+    );
+}
 
+export default function Main() {
     // Toggle to adjust playback speed
-    const speeds = [1, 0.75, 0.5];
+    const speeds = [1, 0.75, 0.5, 0.25];
     const [currSpeed, setCurrSpeed] = useState(1); // default speed
     const adjustPlaybackSpeed = newRate => {
         if (audioElementRef.current) {
             audioElementRef.current.playbackRate = newRate;
         }
+        if (wavAudioRef.current) {
+            wavAudioRef.current.playbackRate = newRate;
+        }
         setCurrSpeed(newRate);
+        console.log("Playback speed set to:", newRate);
     };
 
     //TODO: Make firefox compatible
@@ -230,8 +251,6 @@ export default function Main() {
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
     // Add state for stimulus
     const [selectedStimulus, setSelectedStimulus] = useState(null);
-    const [matchingStimulus, setMatchingStimulus] = useState(null);
-
     //update stimulus and graph when vowel changes
     useEffect(() => {
         //console.log("Submodule changed to:", selectedSubmodule);
@@ -270,24 +289,6 @@ export default function Main() {
             startCapture();
         }
     }, [selectedVowel]);
-
-    // // Match selected stimulus to speaker recording
-    // useEffect(() => {
-    //     if (!selectedStimulus) {
-    //         setMatchingStimulus(null);
-    //     }
-    //     else if (typeof selectedStimulus == 'string') {
-    //         // remove highlighting span tags
-    //         let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "")
-    //         console.log("Matching stimulus to:", stimTrim)
-    //         // match to wav file in ../audio/
-    //         setMatchingStimulus(wavAudioRef.current ? process.env.PUBLIC_URL + '/audio/L1_Spanish_' + stimTrim + '.wav' : null);
-    //         console.log("Matched stimulus to:", matchingStimulus)
-    //     } 
-    //     else {
-    //         setMatchingStimulus(null);
-    //     }
-    // })
 
     // Update submodule if URL changes
     useEffect(() => {
@@ -364,13 +365,13 @@ export default function Main() {
     // Functions for loading and playing the correct stimulus audio
 
     // Load the wav file on mount
-    //TODO: load the wav file on stimulus change
     useEffect(() => {
         let isMounted = true;
         const loadWav = async () => {
             if (!selectedStimulus) return;
             try {
                 const ctx = audioCtx.current || new (window.AudioContext || window.webkitAudioContext)();
+                // remove highlighting tags to get the full stimulus file name
                 let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "")
                 const url = '/audio/' + stimTrim + ".wav";
                 console.log("Loading wav file:", url);
@@ -590,18 +591,7 @@ export default function Main() {
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                                 Playback your recording above.
                             </div>
-                            <div className="toggle-speed" style={{ color: '#f0ead2' }}>
-                                <label htmlFor="speedSelect">Playback Speed:</label>
-                                <select
-                                    id="speedSelect"
-                                    value={currSpeed}
-                                    onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))}
-                                >
-                                    {speeds.map(s => (
-                                        <option key={s} value={s}>{s}x</option>
-                                    ))}
-                                </select>
-                            </div>
+                            <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
                         </div>
                     )}
                     <div className="canvas-container" style={styles.canvasContainer}>
@@ -614,13 +604,19 @@ export default function Main() {
                                 onClick={() => {
                                     if (wavAudioRef.current) {
                                         wavAudioRef.current.play();
+                                        wavAudioRef.current.addEventListener('ended', () => 
+                                            adjustPlaybackSpeed(1), 
+                                        {once: true});
                                     }
                                 }}>
                                 Hear It
                             </Button>
+                            <div style ={{marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2'}}>
+                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds}/>
+                            </div>
                         </div>
                     </div>
-                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
+                    <Button variant="primary" onClick={startButton} style={styles.buttons}>  
                         {rec ? 'Stop' : 'Start'} Capture Audio
                     </Button>
                 </div>
