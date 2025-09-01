@@ -20,13 +20,13 @@ jobs:
         run: npm install
 
       - name: Building the app
-        env:
+        with:
           CI: ''            # disable CRA’s CI mode so lint‐warnings aren’t fatal
         run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          github_token: ${{ secrets.GIHUB_TOKEN }}
           publish_dir: ./build
           publish_branch: gh-pages
