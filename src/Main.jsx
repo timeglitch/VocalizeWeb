@@ -251,10 +251,13 @@ export default function Main() {
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
     // Add state for stimulus
     const [selectedStimulus, setSelectedStimulus] = useState(null);
+    const [stimIndex, setStimIndex] = useState(0); // Global index to keep track of which stimulus to show next
+    
     //update stimulus and graph when vowel changes
     useEffect(() => {
         //console.log("Submodule changed to:", selectedSubmodule);
-        let selectedStimulusIndex = randint(vowelstimuli["Vowel"][selectedVowel][selectedSubmodule].length)
+
+        let selectedStimulusIndex = stimIndex % vowelstimuli["Vowel"][selectedVowel][selectedSubmodule].length;
         let stim = vowelstimuli["Vowel"][selectedVowel][selectedSubmodule][selectedStimulusIndex];
         if (!stim) {
             setSelectedStimulus("No stimulus available");
@@ -298,7 +301,7 @@ export default function Main() {
             onlyDrawAxes: true
         });
 
-    }, [selectedVowel]);
+    }, [selectedVowel, stimIndex]);
 
     // Update submodule if URL changes
     useEffect(() => {
@@ -581,6 +584,15 @@ export default function Main() {
                     ) : (
                         <span style={{ color: '#9ca3af' }}>No stimulus available</span>
                     )}
+
+                    <div style={{ margin: '1rem 0' }}>
+                        <Button
+                            style={{ ...styles.buttons, fontWeight: 'bold' }}
+                            onClick={() => {setStimIndex(stimIndex + 1); console.log("Poggers");}}  // Increment stimIndex to get next stimulus
+                        >
+                            Next Stimulus
+                        </Button>
+                    </div>
 
                     <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
                         <select
