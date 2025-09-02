@@ -74,7 +74,7 @@ export function lpc(signal, p) {
  * @param {Object} params.vowelStimuli The vowel stimuli data.
  * @param {string} params.selectedVowel The selected vowel.
  */
-export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContext, vowelStimuli, selectedVowel }) {
+export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false }) {
     const ctx = canvasContext;
     const canvas = ctx.canvas;
     const sr = sampleRate;
@@ -106,40 +106,43 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
     ctx.lineTo(canvas.width, canvas.height - 20);
     ctx.stroke();
 
-    // Calculate and Draw LPC Curve in dB
-    ctx.strokeStyle = '#4299e1';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
+    if (!onlyDrawAxes) { // If only drawing axes, skip LPC curve
 
-    const numPoints = canvas.width;
-    const freqResponse = new Float32Array(numPoints);
-    let maxDb = -Infinity, minDb = Infinity;
+        // Calculate and Draw LPC Curve in dB
+        ctx.strokeStyle = '#4299e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
 
-    for (let i = 0; i < numPoints; i++) {
-        const freq = (i / numPoints) * maxFreq;
-        const w = 2 * Math.PI * freq / sr;
-        let re = 1.0, im = 0.0;
-        for (let k = 1; k < lpcCoefficients.length; k++) {
-            re += lpcCoefficients[k] * Math.cos(k * w);
-            im += lpcCoefficients[k] * Math.sin(k * w);
+        const numPoints = canvas.width;
+        const freqResponse = new Float32Array(numPoints);
+        let maxDb = -Infinity, minDb = Infinity;
+
+        for (let i = 0; i < numPoints; i++) {
+            const freq = (i / numPoints) * maxFreq;
+            const w = 2 * Math.PI * freq / sr;
+            let re = 1.0, im = 0.0;
+            for (let k = 1; k < lpcCoefficients.length; k++) {
+                re += lpcCoefficients[k] * Math.cos(k * w);
+                im += lpcCoefficients[k] * Math.sin(k * w);
+            }
+            const mag = 1.0 / Math.sqrt(re * re + im * im);
+            const db = 20 * Math.log10(mag + 1e-12);
+            freqResponse[i] = db;
+            if (db > maxDb) maxDb = db;
+            if (db < minDb) minDb = db;
         }
-        const mag = 1.0 / Math.sqrt(re * re + im * im);
-        const db = 20 * Math.log10(mag + 1e-12);
-        freqResponse[i] = db;
-        if (db > maxDb) maxDb = db;
-        if (db < minDb) minDb = db;
-    }
 
-    for (let i = 0; i < numPoints; i++) {
-        const x = i;
-        const y = ((maxDb - freqResponse[i]) / (maxDb - minDb)) * (canvas.height - 25) + 5;
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
+        for (let i = 0; i < numPoints; i++) {
+            const x = i;
+            const y = ((maxDb - freqResponse[i]) / (maxDb - minDb)) * (canvas.height - 25) + 5;
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
+        ctx.stroke();
     }
-    ctx.stroke();
 
     if (!vowelStimuli || !vowelStimuli["Vowel"][selectedVowel]) {
         console.error('Selected vowel data not found:', selectedVowel);

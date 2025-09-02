@@ -288,6 +288,16 @@ export default function Main() {
             stopCapture();
             startCapture();
         }
+
+        drawSpectralEnvelope({
+            lpcCoefficients: null, // No LPC coefficients yet, just draw axes
+            sampleRate: null,
+            canvasContext: ctxRef.current,
+            vowelStimuli: vowelstimuli,
+            selectedVowel,
+            onlyDrawAxes: true
+        });
+
     }, [selectedVowel]);
 
     // Update submodule if URL changes
@@ -437,7 +447,7 @@ export default function Main() {
             audioEl.removeEventListener('pause', stopRaf);
             audioEl.removeEventListener('ended', stopRaf);
         };
-    }, [wavBuffer, lpcOrder, selectedVowel]);
+    }, [wavBuffer, lpcOrder, selectedVowel, vowelstimuli]);
     // Remove old handleWavPlay usage from <audio>
 
     // Offcanvas (hamburger menu) state
