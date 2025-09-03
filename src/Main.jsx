@@ -198,6 +198,7 @@ export default function Main() {
 
     }
 
+    // TODO: make window a reusable function so it can be drawn twice in stress module
     // main audio processing function
     const processAudio = (e) => {
         const buffer = new Float32Array(analyzer.current.fftSize);
@@ -458,6 +459,11 @@ export default function Main() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    // Advanced settings dropdown
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const toggleOpen = () => setSettingsOpen(true);
+    const toggleClose = () => setSettingsOpen(false);
+
     return (
         <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
             <Container className="main">
@@ -647,17 +653,30 @@ export default function Main() {
                         {rec ? 'Stop' : 'Start'} Capture Audio
                     </Button>
                 </div>
-                <div className="lpc-order" style={styles.canvasContainer}>
-                    <label htmlFor="lpcOrder">LPC Order:</label>
-                    <input
-                        type="number"
-                        id="lpcOrder"
-                        value={lpcOrder}
-                        onChange={(e) => setLpc(e.target.value)}
-                        min="1"
-                        max="30"
-                    />
-                </div>
+                <Offcanvas show={settingsOpen} onHide={toggleClose} placement="bottom" style={styles.offcanva}>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>Advanced Settings</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <div className="lpc-order" style={styles.canvasContainer}>
+                            <label htmlFor="lpcOrder" style={{ color: "#f0ead2" }}>LPC Order:</label>
+                            <input
+                                type="number"
+                                id="lpcOrder"
+                                value={lpcOrder}
+                                onChange={(e) => setLpc(e.target.value)}
+                                min="1"
+                                max="30"
+                            />
+                            <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
+                                Adjust the LPC order to change the spectral envelope ("wave") detail. Recommended value is 20-30.
+                            </div>
+                        </div>
+                    </Offcanvas.Body>
+                </Offcanvas>
+                <Button variant="secondary" onClick={toggleOpen} style={{ ...styles.buttons, marginTop: '1rem', marginBottom: '1rem' }}>
+                    Advanced Settings
+                </Button>
 
             </Container>
         </div>
