@@ -609,7 +609,12 @@ export default function Main() {
                     {/* --- Playback UI & LPC analysis button --- */}
                     {audioURL && (
                         <div style={styles.audioPlayer}>
-                            <audio controls src={audioURL} ref={audioElementRef} />
+                            <audio 
+                                controls 
+                                src={audioURL} 
+                                ref={audioElementRef} 
+                                style={{ width: '50%'}} 
+                            />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                                 Playback your recording above.
                             </div>
