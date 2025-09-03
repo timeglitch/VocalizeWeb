@@ -11,11 +11,6 @@ function getQueryParam(name) {
     return params.get(name);
 }
 
-// Returns a random integer between 0 and n-1
-function randint(n) {
-    return Math.floor(Math.random() * n);
-}
-
 export function PlaybackSpeed({currSpeed, onChange, speeds}) {
  return (
         <div className="toggle-speed" style={{ color: '#f0ead2' }}>
@@ -116,7 +111,7 @@ export default function Main() {
     };
 
     // start audio capture and recording
-    const startCapture = async () => {
+    async function startCapture() {
         try {
             // Initialize AudioContext
             audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -171,7 +166,7 @@ export default function Main() {
     };
 
     // stop audio capture and recording
-    const stopCapture = async () => {
+    async function stopCapture() {
         if (mic.current) {
             mic.current.disconnect();
             analyzer.current.disconnect();
@@ -301,18 +296,19 @@ export default function Main() {
             selectedVowel,
             onlyDrawAxes: true
         });
-
-    }, [selectedVowel, stimIndex]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVowel, stimIndex, selectedSubmodule, vowelstimuli]);
 
     // Update submodule if URL changes
-    useEffect(() => {
-        const handlePopState = () => {
+        const handlePopState = useCallback(() => {
             setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
-        };
+        }, []);
+        useEffect(() => {
+            handlePopState();
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
-
+        }, [handlePopState]);
+        
     // Decode audio when audioURL changes
     useEffect(() => {
         if (!audioURL) return;
@@ -332,7 +328,7 @@ export default function Main() {
         if (!audioEl || !audioBuffer) return;
         const context = audioBuffer;
         let rafId = null;
-        const updateLPC = () => {
+        function updateLPC() {
             if (!audioEl.paused && !audioEl.ended) {
                 const sr = context.sampleRate;
                 const pos = Math.floor(audioEl.currentTime * sr);
@@ -368,12 +364,13 @@ export default function Main() {
         audioEl.addEventListener('pause', stopRaf);
         audioEl.addEventListener('ended', stopRaf);
         return () => {
+            updateLPC();
             stopRaf();
             audioEl.removeEventListener('play', startRaf);
             audioEl.removeEventListener('pause', stopRaf);
             audioEl.removeEventListener('ended', stopRaf);
         };
-    }, [audioBuffer, lpcOrder]);
+    }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]);
 
 
     // Functions for loading and playing the correct stimulus audio
@@ -465,7 +462,7 @@ export default function Main() {
     const toggleClose = () => setSettingsOpen(false);
 
     return (
-        <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
+        <div className="main-container" style={{ backgroundColor: '#05668d'}}>
             <Container className="main">
                 <Navbar bg="#05668d" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
                     <Navbar.Brand
