@@ -11,13 +11,13 @@ function getQueryParam(name) {
     return params.get(name);
 }
 
-export function PlaybackSpeed({currSpeed, onChange, speeds}) {
- return (
+export function PlaybackSpeed({ currSpeed, onChange, speeds }) {
+    return (
         <div className="toggle-speed" style={{ color: '#f0ead2' }}>
             <label htmlFor="speedSelect">Playback Speed:</label>
-            <select 
-                id="speedSelect" 
-                value={currSpeed} 
+            <select
+                id="speedSelect"
+                value={currSpeed}
                 onChange={onChange}
                 style={{ marginLeft: '0.5rem' }}
             >
@@ -248,7 +248,7 @@ export default function Main() {
     // Add state for stimulus
     const [selectedStimulus, setSelectedStimulus] = useState(null);
     const [stimIndex, setStimIndex] = useState(0); // Global index to keep track of which stimulus to show next
-    
+
     //update stimulus and graph when vowel changes
     useEffect(() => {
         //console.log("Submodule changed to:", selectedSubmodule);
@@ -300,15 +300,15 @@ export default function Main() {
     }, [selectedVowel, stimIndex, selectedSubmodule, vowelstimuli]);
 
     // Update submodule if URL changes
-        const handlePopState = useCallback(() => {
-            setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
-        }, []);
-        useEffect(() => {
-            handlePopState();
+    const handlePopState = useCallback(() => {
+        setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
+    }, []);
+    useEffect(() => {
+        handlePopState();
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-        }, [handlePopState]);
-        
+    }, [handlePopState]);
+
     // Decode audio when audioURL changes
     useEffect(() => {
         if (!audioURL) return;
@@ -387,19 +387,19 @@ export default function Main() {
                 const url = '/audio/' + stimTrim + ".wav";
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
-                if (isMounted) { 
+                if (isMounted) {
                     setWavBuffer(buffer);
                     if (wavAudioRef.current) {
                         wavAudioRef.current.src = url;
-                        console.log('Wav file loaded successfully'); 
+                        console.log('Wav file loaded successfully');
                     }
                 }
             } catch (e) {
                 console.error('Failed to load wav:', e);
             }
         };
-        loadWav().catch((e=>console.error("uncaught promise ", e)));
-        return () => { isMounted = false};
+        loadWav().catch((e => console.error("uncaught promise ", e)));
+        return () => { isMounted = false };
     }, [selectedStimulus]);
 
     // Animate LPC canvas during wav playback
@@ -462,7 +462,7 @@ export default function Main() {
     const toggleClose = () => setSettingsOpen(false);
 
     return (
-        <div className="main-container" style={{ backgroundColor: '#05668d'}}>
+        <div className="main-container" style={{ backgroundColor: '#05668d' }}>
             <Container className="main">
                 <Navbar bg="#05668d" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
                     <Navbar.Brand
@@ -591,7 +591,7 @@ export default function Main() {
                     <div style={{ margin: '1rem 0' }}>
                         <Button
                             style={{ ...styles.buttons, fontWeight: 'bold' }}
-                            onClick={() => {setStimIndex(stimIndex + 1); console.log("Poggers");}}  // Increment stimIndex to get next stimulus
+                            onClick={() => { setStimIndex(stimIndex + 1); console.log("Poggers"); }}  // Increment stimIndex to get next stimulus
                         >
                             Next Stimulus
                         </Button>
@@ -612,11 +612,11 @@ export default function Main() {
                     {/* --- Playback UI & LPC analysis button --- */}
                     {audioURL && (
                         <div style={styles.audioPlayer}>
-                            <audio 
-                                controls 
-                                src={audioURL} 
-                                ref={audioElementRef} 
-                                style={{ width: '50%'}} 
+                            <audio
+                                controls
+                                src={audioURL}
+                                ref={audioElementRef}
+                                style={{ width: '50%' }}
                             />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                                 Playback your recording above.
@@ -629,24 +629,24 @@ export default function Main() {
                     </div>
                     <div className="controls">
                         {/* Hear native speaker's recording  */}
-                        <div class="hear" style={{ marginBottom: '0.5rem'}}>
+                        <div class="hear" style={{ marginBottom: '0.5rem' }}>
                             <Button style={{ ...styles.buttons }}
                                 onClick={() => {
                                     if (wavAudioRef.current) {
                                         wavAudioRef.current.play();
-                                        wavAudioRef.current.addEventListener('ended', () => 
-                                            adjustPlaybackSpeed(1), 
-                                        {once: true});
+                                        wavAudioRef.current.addEventListener('ended', () =>
+                                            adjustPlaybackSpeed(1),
+                                            { once: true });
                                     }
                                 }}>
                                 Hear It
                             </Button>
-                            <div style ={{marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2'}}>
-                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds}/>
+                            <div style={{ marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2' }}>
+                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
                             </div>
                         </div>
                     </div>
-                    <Button variant="primary" onClick={startButton} style={styles.buttons}>  
+                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
                         {rec ? 'Stop' : 'Start'} Capture Audio
                     </Button>
                 </div>

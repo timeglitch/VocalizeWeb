@@ -22,7 +22,7 @@ jobs:
       - name: Building the app
         with:
           CI: ''            # disable CRA’s CI mode so lint‐warnings aren’t fatal
-        run: npm run build
+        run: npm start
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

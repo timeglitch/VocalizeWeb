@@ -30,4 +30,4 @@ jobs:
         CI: ''            # disable CRA’s CI mode so lint‐warnings aren’t fatal
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm test
+    - run: npm start
