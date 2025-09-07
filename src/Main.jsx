@@ -301,7 +301,7 @@ export default function Main() {
             onlyDrawAxes: true
         });
 
-    }, [selectedVowel, stimIndex]);
+    }, [selectedVowel, stimIndex, selectedSubmodule, vowelstimuli]);
 
     // Update submodule if URL changes
     useEffect(() => {
@@ -372,7 +372,7 @@ export default function Main() {
             audioEl.removeEventListener('pause', stopRaf);
             audioEl.removeEventListener('ended', stopRaf);
         };
-    }, [audioBuffer, lpcOrder]);
+    }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]); //mostly should update when audioBuffer or lpcOrder changes
 
 
     // Functions for loading and playing the correct stimulus audio

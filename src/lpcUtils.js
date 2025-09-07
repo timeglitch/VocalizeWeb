@@ -115,7 +115,8 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
 
         const numPoints = canvas.width;
         const freqResponse = new Float32Array(numPoints);
-        let maxDb = -Infinity, minDb = Infinity;
+        let maxDb = 60; //usually around 40 - 60, but having this as a minimum helps with visualization
+        let minDb = 15; //its usually around 5 - 15, but having this as a maximum for the bottom of the graph helps with visualization
 
         for (let i = 0; i < numPoints; i++) {
             const freq = (i / numPoints) * maxFreq;
@@ -141,6 +142,8 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
                 ctx.lineTo(x, y);
             }
         }
+
+        //console.log("Min dB:", minDb, "Max dB:", maxDb);
         ctx.stroke();
     }
 
