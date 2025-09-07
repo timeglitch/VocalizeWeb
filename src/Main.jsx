@@ -11,18 +11,13 @@ function getQueryParam(name) {
     return params.get(name);
 }
 
-// Returns a random integer between 0 and n-1
-function randint(n) {
-    return Math.floor(Math.random() * n);
-}
-
-export function PlaybackSpeed({currSpeed, onChange, speeds}) {
- return (
+export function PlaybackSpeed({ currSpeed, onChange, speeds }) {
+    return (
         <div className="toggle-speed" style={{ color: '#f0ead2' }}>
             <label htmlFor="speedSelect">Playback Speed:</label>
-            <select 
-                id="speedSelect" 
-                value={currSpeed} 
+            <select
+                id="speedSelect"
+                value={currSpeed}
                 onChange={onChange}
                 style={{ marginLeft: '0.5rem' }}
             >
@@ -116,7 +111,7 @@ export default function Main() {
     };
 
     // start audio capture and recording
-    const startCapture = async () => {
+    async function startCapture() {
         try {
             // Initialize AudioContext
             audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -171,7 +166,7 @@ export default function Main() {
     };
 
     // stop audio capture and recording
-    const stopCapture = async () => {
+    async function stopCapture() {
         if (mic.current) {
             mic.current.disconnect();
             analyzer.current.disconnect();
@@ -198,6 +193,7 @@ export default function Main() {
 
     }
 
+    // TODO: make window a reusable function so it can be drawn twice in stress module
     // main audio processing function
     const processAudio = (e) => {
         const buffer = new Float32Array(analyzer.current.fftSize);
@@ -252,7 +248,7 @@ export default function Main() {
     // Add state for stimulus
     const [selectedStimulus, setSelectedStimulus] = useState(null);
     const [stimIndex, setStimIndex] = useState(0); // Global index to keep track of which stimulus to show next
-    
+
     //update stimulus and graph when vowel changes
     useEffect(() => {
         //console.log("Submodule changed to:", selectedSubmodule);
@@ -300,17 +296,18 @@ export default function Main() {
             selectedVowel,
             onlyDrawAxes: true
         });
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVowel, stimIndex, selectedSubmodule, vowelstimuli]);
 
     // Update submodule if URL changes
+    const handlePopState = useCallback(() => {
+        setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
+    }, []);
     useEffect(() => {
-        const handlePopState = () => {
-            setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
-        };
+        handlePopState();
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
+    }, [handlePopState]);
 
     // Decode audio when audioURL changes
     useEffect(() => {
@@ -331,7 +328,7 @@ export default function Main() {
         if (!audioEl || !audioBuffer) return;
         const context = audioBuffer;
         let rafId = null;
-        const updateLPC = () => {
+        function updateLPC() {
             if (!audioEl.paused && !audioEl.ended) {
                 const sr = context.sampleRate;
                 const pos = Math.floor(audioEl.currentTime * sr);
@@ -367,12 +364,13 @@ export default function Main() {
         audioEl.addEventListener('pause', stopRaf);
         audioEl.addEventListener('ended', stopRaf);
         return () => {
+            updateLPC();
             stopRaf();
             audioEl.removeEventListener('play', startRaf);
             audioEl.removeEventListener('pause', stopRaf);
             audioEl.removeEventListener('ended', stopRaf);
         };
-    }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]); //mostly should update when audioBuffer or lpcOrder changes
+    }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]);
 
 
     // Functions for loading and playing the correct stimulus audio
@@ -389,19 +387,19 @@ export default function Main() {
                 const url = '/audio/' + stimTrim + ".wav";
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
-                if (isMounted) { 
+                if (isMounted) {
                     setWavBuffer(buffer);
                     if (wavAudioRef.current) {
                         wavAudioRef.current.src = url;
-                        console.log('Wav file loaded successfully'); 
+                        console.log('Wav file loaded successfully');
                     }
                 }
             } catch (e) {
                 console.error('Failed to load wav:', e);
             }
         };
-        loadWav().catch((e=>console.error("uncaught promise ", e)));
-        return () => { isMounted = false};
+        loadWav().catch((e => console.error("uncaught promise ", e)));
+        return () => { isMounted = false };
     }, [selectedStimulus]);
 
     // Animate LPC canvas during wav playback
@@ -458,8 +456,13 @@ export default function Main() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    // Advanced settings dropdown
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const toggleOpen = () => setSettingsOpen(true);
+    const toggleClose = () => setSettingsOpen(false);
+
     return (
-        <div className="main-container" style={{ backgroundColor: '#05668d', width: '100vw', height: '100vh' }}>
+        <div className="main-container" style={{ backgroundColor: '#05668d' }}>
             <Container className="main">
                 <Navbar bg="#05668d" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
                     <Navbar.Brand
@@ -588,7 +591,7 @@ export default function Main() {
                     <div style={{ margin: '1rem 0' }}>
                         <Button
                             style={{ ...styles.buttons, fontWeight: 'bold' }}
-                            onClick={() => {setStimIndex(stimIndex + 1); console.log("Poggers");}}  // Increment stimIndex to get next stimulus
+                            onClick={() => { setStimIndex(stimIndex + 1); console.log("Poggers"); }}  // Increment stimIndex to get next stimulus
                         >
                             Next Stimulus
                         </Button>
@@ -609,7 +612,12 @@ export default function Main() {
                     {/* --- Playback UI & LPC analysis button --- */}
                     {audioURL && (
                         <div style={styles.audioPlayer}>
-                            <audio controls src={audioURL} ref={audioElementRef} />
+                            <audio
+                                controls
+                                src={audioURL}
+                                ref={audioElementRef}
+                                style={{ width: '50%' }}
+                            />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                                 Playback your recording above.
                             </div>
@@ -621,38 +629,51 @@ export default function Main() {
                     </div>
                     <div className="controls">
                         {/* Hear native speaker's recording  */}
-                        <div class="hear" style={{ marginBottom: '0.5rem'}}>
+                        <div class="hear" style={{ marginBottom: '0.5rem' }}>
                             <Button style={{ ...styles.buttons }}
                                 onClick={() => {
                                     if (wavAudioRef.current) {
                                         wavAudioRef.current.play();
-                                        wavAudioRef.current.addEventListener('ended', () => 
-                                            adjustPlaybackSpeed(1), 
-                                        {once: true});
+                                        wavAudioRef.current.addEventListener('ended', () =>
+                                            adjustPlaybackSpeed(1),
+                                            { once: true });
                                     }
                                 }}>
                                 Hear It
                             </Button>
-                            <div style ={{marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2'}}>
-                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds}/>
+                            <div style={{ marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2' }}>
+                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
                             </div>
                         </div>
                     </div>
-                    <Button variant="primary" onClick={startButton} style={styles.buttons}>  
+                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
                         {rec ? 'Stop' : 'Start'} Capture Audio
                     </Button>
                 </div>
-                <div className="lpc-order" style={styles.canvasContainer}>
-                    <label htmlFor="lpcOrder">LPC Order:</label>
-                    <input
-                        type="number"
-                        id="lpcOrder"
-                        value={lpcOrder}
-                        onChange={(e) => setLpc(e.target.value)}
-                        min="1"
-                        max="30"
-                    />
-                </div>
+                <Offcanvas show={settingsOpen} onHide={toggleClose} placement="bottom" style={styles.offcanva}>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>Advanced Settings</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <div className="lpc-order" style={styles.canvasContainer}>
+                            <label htmlFor="lpcOrder" style={{ color: "#f0ead2" }}>LPC Order:</label>
+                            <input
+                                type="number"
+                                id="lpcOrder"
+                                value={lpcOrder}
+                                onChange={(e) => setLpc(e.target.value)}
+                                min="1"
+                                max="30"
+                            />
+                            <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
+                                Adjust the LPC order to change the spectral envelope ("wave") detail. Recommended value is 20-30.
+                            </div>
+                        </div>
+                    </Offcanvas.Body>
+                </Offcanvas>
+                <Button variant="secondary" onClick={toggleOpen} style={{ ...styles.buttons, marginTop: '1rem', marginBottom: '1rem' }}>
+                    Advanced Settings
+                </Button>
 
             </Container>
         </div>
