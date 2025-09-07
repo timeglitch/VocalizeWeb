@@ -19,7 +19,10 @@ export function applyWindow(buffer) {
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
 export function lpc(signal, p) {
-    const n = signal.length;
+    // Apply pre-emphasis filter to the signal
+    const preEmphasizedSignal = preEmphasis(signal);
+
+    const n = preEmphasizedSignal.length;
     if (p >= n) return { a: null, err: 0 };
 
     // Autocorrelation
@@ -27,10 +30,12 @@ export function lpc(signal, p) {
     for (let i = 0; i <= p; i++) {
         let sum = 0;
         for (let j = 0; j < n - i; j++) {
-            sum += signal[j] * signal[j + i];
+            sum += preEmphasizedSignal[j] * preEmphasizedSignal[j + i];
         }
         R[i] = sum;
     }
+
+    console.log('Autocorrelation coefficients:', R);
 
     // Levinson-Durbin recursion
     let a = new Float32Array(p + 1);
@@ -38,6 +43,7 @@ export function lpc(signal, p) {
     let err = R[0];
 
     if (Math.abs(err) < 1e-9) { // If signal is silent, return zero coefficients
+        console.warn('Signal is silent, returning zero coefficients.');
         return { a: new Float32Array(p + 1), err: 0 };
     }
 
@@ -57,11 +63,30 @@ export function lpc(signal, p) {
 
         err *= (1 - k * k);
 
+        console.log(`Iteration ${i}: Reflection coefficient k = ${k}, Error = ${err}`);
+
         // Save current 'a' for next iteration
         for (let j = 1; j <= i; j++) a_prev[j] = a[j];
     }
 
+    console.log('LPC coefficients:', a);
     return { a, err };
+}
+
+/**
+ * Applies a pre-emphasis filter to the signal.
+ * This boosts the high-frequency components of the signal.
+ * @param {Float32Array} signal The input signal.
+ * @param {number} alpha The pre-emphasis coefficient (default is 0.97).
+ * @returns {Float32Array} The filtered signal.
+ */
+export function preEmphasis(signal, alpha = 0.97) {
+    const emphasizedSignal = new Float32Array(signal.length);
+    emphasizedSignal[0] = signal[0]; // First sample remains the same
+    for (let i = 1; i < signal.length; i++) {
+        emphasizedSignal[i] = signal[i] - alpha * signal[i - 1];
+    }
+    return emphasizedSignal;
 }
 
 /**
