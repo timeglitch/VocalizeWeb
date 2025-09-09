@@ -19,31 +19,35 @@ export function applyWindow(buffer) {
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
 export function lpc(signal, p) {
-    // Apply pre-emphasis filter to the signal
-    const preEmphasizedSignal = preEmphasis(signal);
-
-    const n = preEmphasizedSignal.length;
+    const n = signal.length;
     if (p >= n) return { a: null, err: 0 };
+
+    // pre-emphasis filtering for stability pre-autocorrelation
+    const preEmph = 0.98;
+    const preSignal = new Float32Array(n); // copies pre-emphed signal while maintaining original
+    preSignal[0] = signal[0]; // first sample unchanged
+    for (let i = 1; i < n; i++) {
+        preSignal[i] = signal[i] - preEmph * signal[i - 1];
+    }
+    signal = preSignal; // use pre-emphasized signal for LPC calculation
+
 
     // Autocorrelation
     const R = new Float32Array(p + 1);
     for (let i = 0; i <= p; i++) {
         let sum = 0;
         for (let j = 0; j < n - i; j++) {
-            sum += preEmphasizedSignal[j] * preEmphasizedSignal[j + i];
+            sum += signal[j] * signal[j + i];
         }
         R[i] = sum;
     }
-
-    console.log('Autocorrelation coefficients:', R);
 
     // Levinson-Durbin recursion
     let a = new Float32Array(p + 1);
     let a_prev = new Float32Array(p + 1);
     let err = R[0];
 
-    if (Math.abs(err) < 1e-9) { // If signal is silent, return zero coefficients
-        console.warn('Signal is silent, returning zero coefficients.');
+    if (Math.abs(err) < 1e-6) { // If signal is silent, return zero coefficients
         return { a: new Float32Array(p + 1), err: 0 };
     }
 
@@ -63,30 +67,92 @@ export function lpc(signal, p) {
 
         err *= (1 - k * k);
 
-        console.log(`Iteration ${i}: Reflection coefficient k = ${k}, Error = ${err}`);
-
         // Save current 'a' for next iteration
         for (let j = 1; j <= i; j++) a_prev[j] = a[j];
     }
-
-    console.log('LPC coefficients:', a);
     return { a, err };
+}
+/**
+ * Simple high-pass filter for removing low frequencies.
+ * @param {Float32Array} x input signal
+ * @param {number} sampleRate sample rate (HZ)
+ * @param {number} cutoffHz cutoff frequency (default should be 80)
+ * @returns {Float32Array} filtered signal
+ */
+export function highPassOnePole(input, sampleRate, cutoffHz = 80) {
+    if (input.length === 0) {
+        return new Float32Array(0); // shooting myself in the foot otherwise
+    }
+    // NOTE for the curious: we found these formulas by researching high pass filters online
+    const dt = 1 / sampleRate; // dt = change in time
+    const rc = 1 / (2 * Math.PI * cutoffHz); // rc = resistance capacitance, which is a time constant
+    const a = rc / (rc + dt); // filter coeff
+    const y = new Float32Array(input.length); // output
+    y[0] = input[0];
+    // now we filter...
+    for (let i = 1; i < input.length; i++) {
+        y[i] = a * (y[i - 1] + input[i] - input[i - 1]);
+    }
+    return y;
 }
 
 /**
- * Applies a pre-emphasis filter to the signal.
- * This boosts the high-frequency components of the signal.
- * @param {Float32Array} signal The input signal.
- * @param {number} alpha The pre-emphasis coefficient (default is 0.97).
- * @returns {Float32Array} The filtered signal.
+ * Simple moving-average smoothing across an array (local frequency smoothing).
+ * @param {Float32Array} arr input array
+ * @param {number} windowSize odd window size (default 5)
+ * @returns {Float32Array} smoothed output
  */
-export function preEmphasis(signal, alpha = 0.97) {
-    const emphasizedSignal = new Float32Array(signal.length);
-    emphasizedSignal[0] = signal[0]; // First sample remains the same
-    for (let i = 1; i < signal.length; i++) {
-        emphasizedSignal[i] = signal[i] - alpha * signal[i - 1];
+function smoothArray(arr, windowSize = 5) {
+    const output = new Float32Array(arr.length);
+    const half = Math.floor(windowSize / 2);
+    for (let i = 0; i < arr.length; i++) {
+        let sum = 0;
+        let count = 0;
+        for (let j = i - half; j <= i + half; j++) {
+            if (j >= 0 && j < arr.length) {
+                sum += arr[j];
+                count++;
+            }
+        }
+        output[i] = count ? sum / count : 0;
     }
-    return emphasizedSignal;
+    return output;
+}
+
+/**
+ * Exponential moving average for frame to frame smoothing of frequencies.
+ * In other words, reduces jitter.
+ * @param {Float32Array|null} prev previous frame (null if this is the first frame)
+ * @param {Float32Array} curr current frame
+ * @param {number} alpha smoothing factor (0-1)
+ * @returns {Float32Array} smoothed frame
+ */
+let prevFreqResponse = null;
+function emaSmooth(prev, curr, alpha = 0.8) {
+    if (!prev) {
+        return curr.slice ? curr.slice() : new Float32Array(curr);
+    }
+    const output = new Float32Array(curr.length);
+    for (let i = 0; i < curr.length; i++) {
+        output[i] = alpha * curr[i] + (1 - alpha) * prev[i];
+    }
+    return output;
+}
+
+/**
+ * Reel those poles in when there are sharp resonances (like sibilants or harsh sounds).
+ * @param {Float32Array} a LPC coefficients
+ * @param {number} bwHz bandwidth expansion (HZ)
+ * @param {number} sampleRate sample rate (HZ)
+ * @returns {Float32Array} modified coefficients
+ */
+export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
+    const gamma = Math.exp(-Math.PI * bwHz / sampleRate); // expansion factor
+    const output = new Float32Array(a.length);
+    output[0] = a[0];
+    // filtering applied to all but first coeff so that gain is unchanged
+    for (let k = 1; k < a.length; k++) output[k] = a[k] * Math.pow(gamma, k);
+    return output;
 }
 
 /**
@@ -99,10 +165,15 @@ export function preEmphasis(signal, alpha = 0.97) {
  * @param {Object} params.vowelStimuli The vowel stimuli data.
  * @param {string} params.selectedVowel The selected vowel.
  */
-export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false }) {
+export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false, opts = {} }) {
     const ctx = canvasContext;
     const canvas = ctx.canvas;
-    const sr = sampleRate;
+    const sr = sampleRate || 44100;
+
+    const freqSmoothWindow = opts.freqSmoothWindow || 7; // odd number
+    const temporalAlpha = typeof opts.temporalAlpha === 'number' ? opts.temporalAlpha : 0.55;
+    const applyBandwidthExpand = opts.applyBandwidthExpand || false;
+    const bwHz = opts.bwHz || 60;
 
     ctx.fillStyle = '#1a202c';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -131,49 +202,76 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
     ctx.lineTo(canvas.width, canvas.height - 20);
     ctx.stroke();
 
-    if (!onlyDrawAxes) { // If only drawing axes, skip LPC curve
+    if (!onlyDrawAxes) {  // If only drawing axes, skip LPC curve
 
         // Calculate and Draw LPC Curve in dB
         ctx.strokeStyle = '#4299e1';
         ctx.lineWidth = 2;
         ctx.beginPath();
 
-        const numPoints = canvas.width;
+        const numPoints = Math.max(2, Math.floor(canvas.width));
         const freqResponse = new Float32Array(numPoints);
-        let maxDb = 60; //usually around 40 - 60, but having this as a minimum helps with visualization
-        let minDb = 15; //its usually around 5 - 15, but having this as a maximum for the bottom of the graph helps with visualization
+        let maxDb = -Infinity, minDb = Infinity;
 
+        // Optionally expand bandwidth to stabilize poles (non-destructive)
+        let coeffs = lpcCoefficients;
+        if (!coeffs || coeffs.length < 2) {
+            // nothing to draw
+            return;
+        }
+        if (applyBandwidthExpand) {
+            coeffs = bandwidthExpand(coeffs, bwHz, sr);
+        }
+
+        // compute frequency response in decibels
         for (let i = 0; i < numPoints; i++) {
             const freq = (i / numPoints) * maxFreq;
             const w = 2 * Math.PI * freq / sr;
             let re = 1.0, im = 0.0;
-            for (let k = 1; k < lpcCoefficients.length; k++) {
-                re += lpcCoefficients[k] * Math.cos(k * w);
-                im += lpcCoefficients[k] * Math.sin(k * w);
+            for (let k = 1; k < coeffs.length; k++) {
+                const ck = coeffs[k];
+                re += ck * Math.cos(k * w);
+                im += ck * Math.sin(k * w);
             }
-            const mag = 1.0 / Math.sqrt(re * re + im * im);
-            const db = 20 * Math.log10(mag + 1e-12);
-            freqResponse[i] = db;
-            if (db > maxDb) maxDb = db;
-            if (db < minDb) minDb = db;
-        }
-
-        for (let i = 0; i < numPoints; i++) {
-            const x = i;
-            const y = ((maxDb - freqResponse[i]) / (maxDb - minDb)) * (canvas.height - 25) + 5;
-            if (i === 0) {
-                ctx.moveTo(x, y);
+            const denom = Math.sqrt(re * re + im * im) + 1e-12;
+            const mag = 1.0 / denom;
+            const db = 20 * Math.log10(mag);
+            if (!Number.isFinite(db)) {
+                freqResponse[i] = -200; // fallback
             } else {
-                ctx.lineTo(x, y);
+                freqResponse[i] = db;
             }
+            if (freqResponse[i] > maxDb) maxDb = freqResponse[i];
+            if (freqResponse[i] < minDb) minDb = freqResponse[i];
         }
 
+        // local smoothing
+        const localSmoothed = smoothArray(freqResponse, freqSmoothWindow);
+
+        // smoothing across frames
+        const finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
+        prevFreqResponse = finalResponse.slice(0); // store a copy
+
+        // recompute min/max 
+        maxDb = -Infinity; minDb = Infinity;
+        for (let i = 0; i < finalResponse.length; i++) {
+            const v = finalResponse[i];
+            if (v > maxDb) maxDb = v;
+            if (v < minDb) minDb = v;
+        }
+        // prevent weird ranges
+        const range = (maxDb - minDb) || 1;
+
+        for (let i = 0; i < finalResponse.length; i++) {
+            const x = i;
+            const y = ((maxDb - finalResponse[i]) / range) * (canvas.height - 25) + 5;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
         //console.log("Min dB:", minDb, "Max dB:", maxDb);
         ctx.stroke();
     }
 
-    if (!vowelStimuli || !vowelStimuli["Vowel"][selectedVowel]) {
-        console.error('Selected vowel data not found:', selectedVowel);
+    if (!vowelStimuli || !vowelStimuli["Vowel"] || !vowelStimuli["Vowel"][selectedVowel]) {
         return;
     }
     const f1_range = vowelStimuli["Vowel"][selectedVowel]["formant"]["f1"];
@@ -189,3 +287,21 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
     ctx.fillRect(f2_start, 0, f2_end - f2_start, canvas.height - 20);
     ctx.strokeRect(f2_start, 0, f2_end - f2_start, canvas.height - 20);
 }
+
+// /**
+//  * Exponential moving average for smoothing the LPC coefficients over frames.
+//  * @param {Float32Array|null} prev previous LPC coefficients (null if first frame)
+//  * @param {Float32Array} curr current LPC coefficients
+//  * @param {number} alpha smoothing factor (0-1)
+//  * @returns {Float32Array} smoothed LPC coefficients
+//  */
+// export function emaFrame(prev, curr, alpha = 0.2) {
+//     if (!prev) {
+//         return curr;
+//     }
+//     const newCoeffs = new Float32Array(curr.length);
+//     for (let i = 0; i < curr.length; i++) {
+//         newCoeffs[i] = alpha * curr[i] + (1 - alpha) * prev[i];
+//     }
+//     return newCoeffs;
+// }

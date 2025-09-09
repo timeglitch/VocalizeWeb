@@ -52,9 +52,8 @@ export default function Main() {
         }
     }, []);
 
-    const [lpcOrder, setLpc] = useState(20)
+    const [lpcOrder, setLpc] = useState(11)
     // NOTE: average female LPC is 9-11, average male LPC is 11-13. Notify users of this.
-    // For this use case, 20 looks better, don't know why
     const [rec, setRec] = useState(false)
     const audioCtx = useRef(null)
     const analyzer = useRef(null)
@@ -591,7 +590,7 @@ export default function Main() {
                     <div style={{ margin: '1rem 0' }}>
                         <Button
                             style={{ ...styles.buttons, fontWeight: 'bold' }}
-                            onClick={() => { setStimIndex(stimIndex + 1); console.log("Poggers"); }}  // Increment stimIndex to get next stimulus
+                            onClick={() => { setStimIndex(stimIndex + 1); console.log("Next stimulus loaded"); }}  // Increment stimIndex to get next stimulus
                         >
                             Next Stimulus
                         </Button>
@@ -666,7 +665,9 @@ export default function Main() {
                                 max="30"
                             />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
-                                Adjust the LPC order to change the spectral envelope ("wave") detail. Recommended value is 20-30.
+                                Adjust the LPC order to change the spectral envelope ("wave") detail.
+                                <br />
+                                For higher voices, LPC should be between 9-11. For lower voices, LPC is 11-13.
                             </div>
                         </div>
                     </Offcanvas.Body>
