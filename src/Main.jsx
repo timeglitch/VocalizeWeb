@@ -74,6 +74,12 @@ export default function Main() {
 
     const vowelstimuli = require('./VowelStimuli.json');
 
+    const [userAudioLPC, setUserAudioLPC] = useState(null);
+    const [nativeAudioLPC, setNativeAudioLPC] = useState(null);
+    const [foreignAudioLPC, setForeignAudioLPC] = useState(null);
+
+
+
     // set canvas dimensions
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -91,7 +97,7 @@ export default function Main() {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         return () =>
-            window.removeEventListener('resize', resizeCanvas); // cleanup on unmoun
+            window.removeEventListener('resize', resizeCanvas); // cleanup on unmount
     }, []);
 
     // Functions for live audio processing, recording, and playback with visuals of user speech
@@ -200,21 +206,15 @@ export default function Main() {
 
         // apply the Hamming window
         const windowedBuffer = applyWindow(buffer);
-
         // LPC analysis
         const { a, err } = lpc(windowedBuffer, lpcOrder);
-        if (a) {
-            drawSpectralEnvelope({
-                lpcCoefficients: a,
-                sampleRate: audioCtx.current ? audioCtx.current.sampleRate : 44100,
-                canvasContext: ctxRef.current,
-                vowelStimuli: vowelstimuli,
-                selectedVowel
-            });
+        console.log("Processing audio, live user lpc is ", a);
+
+        if (a && a[0] > 0) { // basic check to ensure LPC is valid, otherwise don't overwrite previous valid LPC
+            setUserAudioLPC(a);
         } else {
             console.log('No!!!! LPC failed: ', err);
         }
-
     }
 
     //const duration = 100;
@@ -339,16 +339,11 @@ export default function Main() {
                     samples = context.getChannelData(0).slice(context.length - windowSize);
                 }
                 const windowed = applyWindow(samples);
-                const { a } = lpc(windowed, lpcOrder);
-                if (a && ctxRef.current && canvasRef.current) {
-                    drawSpectralEnvelope({
-                        lpcCoefficients: a,
-                        sampleRate: sr,
-                        canvasContext: ctxRef.current,
-                        vowelStimuli: vowelstimuli,
-                        selectedVowel
-                    });
+                const { a, err } = lpc(windowed, lpcOrder);
+                if (a) {
+                    setUserAudioLPC(a);
                 }
+
                 rafId = requestAnimationFrame(updateLPC);
             }
         };
@@ -371,6 +366,22 @@ export default function Main() {
         };
     }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]);
 
+    /**
+     * Update graph when LPC data changes
+     */
+    useEffect(() => {
+        if (ctxRef.current && canvasRef.current && audioBuffer) {
+            drawSpectralEnvelope({
+                lpcCoefficients: userAudioLPC,
+                lpcCoefficients2: nativeAudioLPC,
+                lpcCoefficients3: foreignAudioLPC,
+                sampleRate: audioBuffer.sampleRate,
+                canvasContext: ctxRef.current,
+                vowelStimuli: vowelstimuli,
+                selectedVowel
+            });
+        }
+    }, [userAudioLPC, nativeAudioLPC, foreignAudioLPC, audioBuffer, selectedVowel, vowelstimuli]);
 
     // Functions for loading and playing the correct stimulus audio
 
@@ -420,13 +431,7 @@ export default function Main() {
                 const windowed = applyWindow(samples);
                 const { a } = lpc(windowed, lpcOrder);
                 if (a && ctxRef.current && canvasRef.current) {
-                    drawSpectralEnvelope({
-                        lpcCoefficients: a,
-                        sampleRate: sr,
-                        canvasContext: ctxRef.current,
-                        vowelStimuli: vowelstimuli,
-                        selectedVowel
-                    });
+                    setNativeAudioLPC(a);
                 }
                 rafId = requestAnimationFrame(updateLPC);
             }
@@ -448,7 +453,6 @@ export default function Main() {
             audioEl.removeEventListener('ended', stopRaf);
         };
     }, [wavBuffer, lpcOrder, selectedVowel, vowelstimuli]);
-    // Remove old handleWavPlay usage from <audio>
 
     // Offcanvas (hamburger menu) state
     const [show, setShow] = useState(false);

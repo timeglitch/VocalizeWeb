@@ -124,6 +124,7 @@ function smoothArray(arr, windowSize = 5) {
 /**
  * Exponential moving average for frame to frame smoothing of frequencies.
  * In other words, reduces jitter.
+ * TODO: do we even need this filter?
  * @param {Float32Array|null} prev previous frame (null if this is the first frame)
  * @param {Float32Array} curr current frame
  * @param {number} alpha smoothing factor (0-1)
@@ -293,12 +294,12 @@ export function drawSpectralEnvelope({ lpcCoefficients, lpcCoefficients2 = null,
 
     if (!onlyDrawAxes) {  // If only drawing axes, skip LPC curve
 
-        prevFreqResponse1 = drawLPCCurve(ctx, lpcCoefficients, '#4299e1', sr, prevFreqResponse1, opts).slice(0);
+        prevFreqResponse1 = drawLPCCurve(ctx, lpcCoefficients, '#4299e1', sr, prevFreqResponse1, opts); //removed the .slice(0) on these since I don't think it is necessary
         if (lpcCoefficients2) {
-            prevFreqResponse2 = drawLPCCurve(ctx, lpcCoefficients2, '#48bb78', sr, prevFreqResponse2, opts).slice(0);
+            prevFreqResponse2 = drawLPCCurve(ctx, lpcCoefficients2, '#48bb78', sr, prevFreqResponse2, opts);
         }
         if (lpcCoefficients3) {
-            prevFreqResponse3 = drawLPCCurve(ctx, lpcCoefficients3, '#ed64a6', sr, prevFreqResponse3, opts).slice(0);
+            prevFreqResponse3 = drawLPCCurve(ctx, lpcCoefficients3, '#ed64a6', sr, prevFreqResponse3, opts);
         }
     }
 
