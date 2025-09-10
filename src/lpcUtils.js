@@ -1,3 +1,5 @@
+const DEFAULT_MAX_FREQ = 5000; // Hz
+
 /**
  * Applies a Hamming window to the buffer.
  * @param {Float32Array} buffer The input signal.
@@ -127,7 +129,6 @@ function smoothArray(arr, windowSize = 5) {
  * @param {number} alpha smoothing factor (0-1)
  * @returns {Float32Array} smoothed frame
  */
-let prevFreqResponse = null;
 function emaSmooth(prev, curr, alpha = 0.8) {
     if (!prev) {
         return curr.slice ? curr.slice() : new Float32Array(curr);
@@ -144,7 +145,7 @@ function emaSmooth(prev, curr, alpha = 0.8) {
  * @param {Float32Array} a LPC coefficients
  * @param {number} bwHz bandwidth expansion (HZ)
  * @param {number} sampleRate sample rate (HZ)
- * @returns {Float32Array} modified coefficients
+ * @returns {Float32Array}  modified coefficients
  */
 export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
     const gamma = Math.exp(-Math.PI * bwHz / sampleRate); // expansion factor
@@ -153,6 +154,99 @@ export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
     // filtering applied to all but first coeff so that gain is unchanged
     for (let k = 1; k < a.length; k++) output[k] = a[k] * Math.pow(gamma, k);
     return output;
+}
+let prevFreqResponse1 = null;
+let prevFreqResponse2 = null;
+let prevFreqResponse3 = null;
+/**
+ * Draws the LPC curve on the given canvas context.
+ * @param {canvasContext} ctx 
+ * @param {Float32Array} coeffs 
+ * @param {string} color 
+ * @param {Float32Array|null} prevFreqResponse 
+ * @returns {Float32Array} the final frequency response, used for smoothing next frame
+ */
+function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {}) {
+    if (!coeffs || coeffs.length < 2) {
+        // nothing to draw
+        console.warn("No LPC coefficients to draw");
+        return;
+    }
+
+    const freqSmoothWindow = opts.freqSmoothWindow || 7; // odd number
+    const temporalAlpha = typeof opts.temporalAlpha === 'number' ? opts.temporalAlpha : 0.55;
+    const applyBandwidthExpand = opts.applyBandwidthExpand || false;
+    const bwHz = opts.bwHz || 60;
+    const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
+
+
+        // Calculate and Draw LPC Curve in dB
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const canvas = ctx.canvas;
+
+    const numPoints = Math.max(2, Math.floor(canvas.width));
+    const freqResponse = new Float32Array(numPoints);
+    let maxDb = -Infinity, minDb = Infinity;
+
+    // Optionally expand bandwidth to stabilize poles (non-destructive)
+    if (!coeffs || coeffs.length < 2) {
+        // nothing to draw
+        return;
+    }
+    if (applyBandwidthExpand) {
+        coeffs = bandwidthExpand(coeffs, bwHz, sampleRate);
+    }
+
+    // compute frequency response in decibels
+    for (let i = 0; i < numPoints; i++) {
+        const freq = (i / numPoints) * maxFreq;
+        const w = 2 * Math.PI * freq / sampleRate;
+        let re = 1.0, im = 0.0;
+        for (let k = 1; k < coeffs.length; k++) {
+            const ck = coeffs[k];
+            re += ck * Math.cos(k * w);
+            im += ck * Math.sin(k * w);
+        }
+        const denom = Math.sqrt(re * re + im * im) + 1e-12;
+        const mag = 1.0 / denom;
+        const db = 20 * Math.log10(mag);
+        if (!Number.isFinite(db)) {
+            freqResponse[i] = -200; // fallback
+        } else {
+            freqResponse[i] = db;
+        }
+        if (freqResponse[i] > maxDb) maxDb = freqResponse[i];
+        if (freqResponse[i] < minDb) minDb = freqResponse[i];
+    }
+
+    // local smoothing
+    const localSmoothed = smoothArray(freqResponse, freqSmoothWindow);
+
+    // smoothing across frames
+    const finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
+    //prevFreqResponse = finalResponse.slice(0); // store a copy (moved outside)
+
+    // recompute min/max 
+    maxDb = -Infinity; minDb = Infinity;
+    for (let i = 0; i < finalResponse.length; i++) {
+        const v = finalResponse[i];
+        if (v > maxDb) maxDb = v;
+        if (v < minDb) minDb = v;
+    }
+    // prevent weird ranges
+    const range = (maxDb - minDb) || 1;
+
+    for (let i = 0; i < finalResponse.length; i++) {
+        const x = i;
+        const y = ((maxDb - finalResponse[i]) / range) * (canvas.height - 25) + 5;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    //console.log("Min dB:", minDb, "Max dB:", maxDb);
+    ctx.stroke();
+
+    return finalResponse;
 }
 
 /**
@@ -165,19 +259,14 @@ export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
  * @param {Object} params.vowelStimuli The vowel stimuli data.
  * @param {string} params.selectedVowel The selected vowel.
  */
-export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false, opts = {} }) {
+export function drawSpectralEnvelope({ lpcCoefficients, lpcCoefficients2 = null, lpcCoefficients3 = null, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false, opts = {} }) {
     const ctx = canvasContext;
     const canvas = ctx.canvas;
     const sr = sampleRate || 44100;
-
-    const freqSmoothWindow = opts.freqSmoothWindow || 7; // odd number
-    const temporalAlpha = typeof opts.temporalAlpha === 'number' ? opts.temporalAlpha : 0.55;
-    const applyBandwidthExpand = opts.applyBandwidthExpand || false;
-    const bwHz = opts.bwHz || 60;
+    const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
 
     ctx.fillStyle = '#1a202c';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const maxFreq = 5000;
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#374151';
     ctx.fillStyle = '#9ca3af';
@@ -204,71 +293,13 @@ export function drawSpectralEnvelope({ lpcCoefficients, sampleRate, canvasContex
 
     if (!onlyDrawAxes) {  // If only drawing axes, skip LPC curve
 
-        // Calculate and Draw LPC Curve in dB
-        ctx.strokeStyle = '#4299e1';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-
-        const numPoints = Math.max(2, Math.floor(canvas.width));
-        const freqResponse = new Float32Array(numPoints);
-        let maxDb = -Infinity, minDb = Infinity;
-
-        // Optionally expand bandwidth to stabilize poles (non-destructive)
-        let coeffs = lpcCoefficients;
-        if (!coeffs || coeffs.length < 2) {
-            // nothing to draw
-            return;
+        prevFreqResponse1 = drawLPCCurve(ctx, lpcCoefficients, '#4299e1', sr, prevFreqResponse1, opts).slice(0);
+        if (lpcCoefficients2) {
+            prevFreqResponse2 = drawLPCCurve(ctx, lpcCoefficients2, '#48bb78', sr, prevFreqResponse2, opts).slice(0);
         }
-        if (applyBandwidthExpand) {
-            coeffs = bandwidthExpand(coeffs, bwHz, sr);
+        if (lpcCoefficients3) {
+            prevFreqResponse3 = drawLPCCurve(ctx, lpcCoefficients3, '#ed64a6', sr, prevFreqResponse3, opts).slice(0);
         }
-
-        // compute frequency response in decibels
-        for (let i = 0; i < numPoints; i++) {
-            const freq = (i / numPoints) * maxFreq;
-            const w = 2 * Math.PI * freq / sr;
-            let re = 1.0, im = 0.0;
-            for (let k = 1; k < coeffs.length; k++) {
-                const ck = coeffs[k];
-                re += ck * Math.cos(k * w);
-                im += ck * Math.sin(k * w);
-            }
-            const denom = Math.sqrt(re * re + im * im) + 1e-12;
-            const mag = 1.0 / denom;
-            const db = 20 * Math.log10(mag);
-            if (!Number.isFinite(db)) {
-                freqResponse[i] = -200; // fallback
-            } else {
-                freqResponse[i] = db;
-            }
-            if (freqResponse[i] > maxDb) maxDb = freqResponse[i];
-            if (freqResponse[i] < minDb) minDb = freqResponse[i];
-        }
-
-        // local smoothing
-        const localSmoothed = smoothArray(freqResponse, freqSmoothWindow);
-
-        // smoothing across frames
-        const finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
-        prevFreqResponse = finalResponse.slice(0); // store a copy
-
-        // recompute min/max 
-        maxDb = -Infinity; minDb = Infinity;
-        for (let i = 0; i < finalResponse.length; i++) {
-            const v = finalResponse[i];
-            if (v > maxDb) maxDb = v;
-            if (v < minDb) minDb = v;
-        }
-        // prevent weird ranges
-        const range = (maxDb - minDb) || 1;
-
-        for (let i = 0; i < finalResponse.length; i++) {
-            const x = i;
-            const y = ((maxDb - finalResponse[i]) / range) * (canvas.height - 25) + 5;
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        //console.log("Min dB:", minDb, "Max dB:", maxDb);
-        ctx.stroke();
     }
 
     if (!vowelStimuli || !vowelStimuli["Vowel"] || !vowelStimuli["Vowel"][selectedVowel]) {
