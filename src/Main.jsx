@@ -3,7 +3,7 @@ import { loadWavFile } from './audioUtils';
 import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootstrap';
 import { ReactComponent as Logo } from "./logo.svg";
 import { StyleSheet } from 'react-native';
-import { applyWindow, lpc, drawSpectralEnvelope } from './lpcUtils';
+import { lpc, drawSpectralEnvelope } from './lpcUtils';
 
 // Add this helper to parse query params
 function getQueryParam(name) {
@@ -52,7 +52,7 @@ export default function Main() {
         }
     }, []);
 
-    const [lpcOrder, setLpc] = useState(11)
+    const [lpcOrder, setLpc] = useState(20); // 20 is a default that looks good.
     // NOTE: average female LPC is 9-11, average male LPC is 11-13. Notify users of this.
     const [rec, setRec] = useState(false)
     const audioCtx = useRef(null)
@@ -204,10 +204,8 @@ export default function Main() {
         const buffer = new Float32Array(analyzer.current.fftSize);
         analyzer.current.getFloatTimeDomainData(buffer);
 
-        // apply the Hamming window
-        const windowedBuffer = applyWindow(buffer);
         // LPC analysis
-        const { a, err } = lpc(windowedBuffer, lpcOrder);
+        const { a, err } = lpc(buffer, lpcOrder);
         console.log("Processing audio, live user lpc is ", a);
 
         if (a && a[0] > 0) { // basic check to ensure LPC is valid, otherwise don't overwrite previous valid LPC
@@ -242,6 +240,7 @@ export default function Main() {
         { label: '[o]', value: 'o' },
         { label: '[u]', value: 'u' },
     ];
+    
     // Add state for submodule
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
     // Add state for stimulus
@@ -338,8 +337,7 @@ export default function Main() {
                 } else {
                     samples = context.getChannelData(0).slice(context.length - windowSize);
                 }
-                const windowed = applyWindow(samples);
-                const { a, err } = lpc(windowed, lpcOrder);
+                const { a, err } = lpc(samples, lpcOrder);
                 if (a) {
                     setUserAudioLPC(a);
                 }
@@ -428,8 +426,7 @@ export default function Main() {
                 } else {
                     samples = wavBuffer.getChannelData(0).slice(wavBuffer.length - windowSize);
                 }
-                const windowed = applyWindow(samples);
-                const { a } = lpc(windowed, lpcOrder);
+                const { a } = lpc(samples, lpcOrder);
                 if (a && ctxRef.current && canvasRef.current) {
                     setNativeAudioLPC(a);
                 }
@@ -669,9 +666,9 @@ export default function Main() {
                                 max="30"
                             />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
-                                Adjust the LPC order to change the spectral envelope ("wave") detail.
+                                Adjust the LPC order to change the spectral envelope ("wave") detail. Default is 20.
                                 <br />
-                                For higher voices, LPC should be between 9-11. For lower voices, LPC is 11-13.
+                                For higher voices, LPC order is traditionally 9-11. For lower voices, LPC order is 11-13.
                             </div>
                         </div>
                     </Offcanvas.Body>

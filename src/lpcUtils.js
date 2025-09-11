@@ -20,9 +20,17 @@ export function applyWindow(buffer) {
  * @param {number} p The order of the LPC analysis.
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
-export function lpc(signal, p) {
+export function lpc(signal, p, opts = {window: "hamming"}) {
     const n = signal.length;
     if (p >= n) return { a: null, err: 0 };
+
+    // Apply windowing if specified
+    if (opts.window === "hamming") {
+        signal = applyWindow(signal);
+    }
+    else {
+        console.log("No windowing applied");
+    }
 
     // pre-emphasis filtering for stability pre-autocorrelation
     const preEmph = 0.98;
