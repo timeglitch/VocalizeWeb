@@ -20,7 +20,7 @@ export function applyWindow(buffer) {
  * @param {number} p The order of the LPC analysis.
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
-export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: true}) {
+export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: false}) {
     const n = signal.length;
     if (p >= n) return { a: null, err: 0 };
 
@@ -84,6 +84,8 @@ export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: true}
     return { a, err };
 }
 /**
+ * TODO: Cam, where did you get this filter from?
+ * 
  * Simple high-pass filter for removing low frequencies.
  * @param {Float32Array} x input signal
  * @param {number} sampleRate sample rate (HZ)
@@ -168,6 +170,7 @@ export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
 let prevFreqResponse1 = null;
 let prevFreqResponse2 = null;
 let prevFreqResponse3 = null;
+
 /**
  * Draws the LPC curve on the given canvas context.
  * @param {canvasContext} ctx 
@@ -176,7 +179,7 @@ let prevFreqResponse3 = null;
  * @param {Float32Array|null} prevFreqResponse 
  * @returns {Float32Array} the final frequency response, used for smoothing next frame
  */
-function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {}) {
+function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = { fft: false }) {
     if (!coeffs || coeffs.length < 2) {
         // nothing to draw
         console.warn("No LPC coefficients to draw");
@@ -188,6 +191,7 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     const applyBandwidthExpand = opts.applyBandwidthExpand || false;
     const bwHz = opts.bwHz || 60;
     const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
+    const usefft = opts.fft || false;
 
 
         // Calculate and Draw LPC Curve in dB
@@ -234,9 +238,14 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     // local smoothing
     const localSmoothed = smoothArray(freqResponse, freqSmoothWindow);
 
+    let finalResponse;
     // smoothing across frames
-    const finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
-    //prevFreqResponse = finalResponse.slice(0); // store a copy (moved outside)
+    if (prevFreqResponse) {
+        finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
+    }
+    else {
+        finalResponse = localSmoothed;
+    }
 
     // recompute min/max 
     maxDb = -Infinity; minDb = Infinity;
