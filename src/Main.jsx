@@ -3,7 +3,7 @@ import { loadWavFile } from './audioUtils';
 import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootstrap';
 import { ReactComponent as Logo } from "./logo.svg";
 import { StyleSheet } from 'react-native';
-import { lpc, drawSpectralEnvelope } from './lpcUtils';
+import { lpc, drawSpectralEnvelope } from './speechProcessingUtils';
 
 // Add this helper to parse query params
 function getQueryParam(name) {

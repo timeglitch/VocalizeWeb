@@ -35,10 +35,12 @@ We're still working on it!
  - Inspired by the [staRt App](https://www.bitslabstart.com/), developed by the BITS lab at NYU.
  - Thank you to Dr. Tara McAllister for her assistance during the preliminary stages of this project.
 
+ - Cool online spectrogram that was helpful here: https://github.com/polarity/app.spectrogram.
+
 
 ## Support
 
-For support, email [Cam](cxzhu@wisc.edu) or [Frank](fjzhang@wisc.edu). 
+For support, email [Cam](cxzhu@wisc.edu) or [Frank](frankj.zhang@gmail.com). 
 
 ## License
 

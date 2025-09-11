@@ -20,7 +20,7 @@ export function applyWindow(buffer) {
  * @param {number} p The order of the LPC analysis.
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
-export function lpc(signal, p, opts = {window: "hamming"}) {
+export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: true}) {
     const n = signal.length;
     if (p >= n) return { a: null, err: 0 };
 
@@ -33,14 +33,15 @@ export function lpc(signal, p, opts = {window: "hamming"}) {
     }
 
     // pre-emphasis filtering for stability pre-autocorrelation
-    const preEmph = 0.98;
-    const preSignal = new Float32Array(n); // copies pre-emphed signal while maintaining original
-    preSignal[0] = signal[0]; // first sample unchanged
-    for (let i = 1; i < n; i++) {
-        preSignal[i] = signal[i] - preEmph * signal[i - 1];
+    const preEmph = opts.preEmph || 0.98; // default to 0.98 if not provided
+    if (preEmph > 0) { // only apply if preEmph > 0, otherwise skip
+        const preSignal = new Float32Array(n); // copies pre-emphed signal while maintaining original
+        preSignal[0] = signal[0]; // first sample unchanged
+        for (let i = 1; i < n; i++) {
+            preSignal[i] = signal[i] - preEmph * signal[i - 1];
+        }
+        signal = preSignal; // use pre-emphasized signal for LPC calculation
     }
-    signal = preSignal; // use pre-emphasized signal for LPC calculation
-
 
     // Autocorrelation
     const R = new Float32Array(p + 1);
