@@ -52,7 +52,7 @@ export default function Main() {
         }
     }, []);
 
-    const [lpcOrder, setLpc] = useState(20); // 20 is a default that looks good.
+    const [lpcOrder, setLpc] = useState(45); // 20 is a default that looks good.
     // NOTE: average female LPC is 9-11, average male LPC is 11-13. Notify users of this.
     const [rec, setRec] = useState(false)
     const audioCtx = useRef(null)
@@ -663,12 +663,10 @@ export default function Main() {
                                 value={lpcOrder}
                                 onChange={(e) => setLpc(e.target.value)}
                                 min="1"
-                                max="30"
+                                max="100"
                             />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
-                                Adjust the LPC order to change the spectral envelope ("wave") detail. Default is 20.
-                                <br />
-                                For higher voices, LPC order is traditionally 9-11. For lower voices, LPC order is 11-13.
+                                Adjust the LPC order to change the spectral envelope ("wave") detail. Default is 45, which is necessary to capture the details at this sample rate.
                             </div>
                         </div>
                     </Offcanvas.Body>
