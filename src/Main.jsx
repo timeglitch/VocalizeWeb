@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { loadWavFile } from './audioUtils';
 import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootstrap';
-import { ReactComponent as Logo } from "./logo.svg";
+import { ReactComponent as Logo } from "./assets/img/logo.svg";
 import { StyleSheet } from 'react-native';
 import { lpc, drawSpectralEnvelope } from './speechProcessingUtils';
+import './App.css';
 
 // Add this helper to parse query params
 function getQueryParam(name) {
@@ -13,7 +14,7 @@ function getQueryParam(name) {
 
 export function PlaybackSpeed({ currSpeed, onChange, speeds }) {
     return (
-        <div className="toggle-speed" style={{ color: '#f0ead2' }}>
+        <div className="toggle-speed" style={{ color: '#13120F' }}>
             <label htmlFor="speedSelect">Playback Speed:</label>
             <select
                 id="speedSelect"
@@ -28,6 +29,7 @@ export function PlaybackSpeed({ currSpeed, onChange, speeds }) {
         </div>
     );
 }
+
 
 export default function Main() {
     // Toggle to adjust playback speed
@@ -52,8 +54,7 @@ export default function Main() {
         }
     }, []);
 
-    const [lpcOrder, setLpc] = useState(45); // 20 is a default that looks good.
-    // NOTE: average female LPC is 9-11, average male LPC is 11-13. Notify users of this.
+    const [lpcOrder, setLpc] = useState(45); 
     const [rec, setRec] = useState(false)
     const audioCtx = useRef(null)
     const analyzer = useRef(null)
@@ -76,7 +77,7 @@ export default function Main() {
 
     const [userAudioLPC, setUserAudioLPC] = useState(null);
     const [nativeAudioLPC, setNativeAudioLPC] = useState(null);
-    const [foreignAudioLPC, setForeignAudioLPC] = useState(null);
+    const foreignAudioLPC = useState(null);
 
 
 
@@ -340,8 +341,9 @@ export default function Main() {
                 const { a, err } = lpc(samples, lpcOrder);
                 if (a) {
                     setUserAudioLPC(a);
+                } else {
+                    console.log("Playback error, LPC: ", err);
                 }
-
                 rafId = requestAnimationFrame(updateLPC);
             }
         };
@@ -462,12 +464,12 @@ export default function Main() {
     const toggleClose = () => setSettingsOpen(false);
 
     return (
-        <div className="main-container" style={{ backgroundColor: '#05668d' }}>
+        <div className="main-container" style={{ backgroundColor: '#F2F1EB' }}>
             <Container className="main">
-                <Navbar bg="#05668d" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
+                <Navbar bg="#F3540F" variant="dark" style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}>
                     <Navbar.Brand
                         style={{
-                            fontWeight: 'bold', fontSize: '1rem', color: '#f0ead2', cursor: 'pointer', padding: '0.5rem', boxShadow: '0 4px 15px rgb(0, 57, 51)'
+                            fontWeight: 'bold', fontSize: '1rem', color: '#F2F1EB', cursor: 'pointer', padding: '0.5rem', boxShadow: '0 4px 15px rgb(0, 57, 51)'
                         }}
                         onClick={handleShow}
                     >
@@ -478,12 +480,12 @@ export default function Main() {
                             className="d-inline-block align-top"
                             style={{
                                 marginRight: '10px',
-                                backgroundColor: '#f0ead2',
+                                backgroundColor: '#F2F1EB',
                                 borderRadius: '5px',
                                 padding: '2px',
                             }}
                         />
-                        <NavItem style={{ display: 'inline', color: '#f0ead2', fontSize: '1rem' }}>Submodules</NavItem>
+                        <NavItem style={{ display: 'inline', color: '#13120F', fontSize: '1rem', fontFamily: 'Nexa-Heavy, sans-serif', letterSpacing: '0.08em' }}>Submodules</NavItem>
                     </Navbar.Brand>
                     <Navbar.Toggle onClick={handleShow} aria-controls="offcanvasNavbar" />
                 </Navbar>
@@ -593,7 +595,7 @@ export default function Main() {
                             style={{ ...styles.buttons, fontWeight: 'bold' }}
                             onClick={() => { setStimIndex(stimIndex + 1); console.log("Next stimulus loaded"); }}  // Increment stimIndex to get next stimulus
                         >
-                            Next Stimulus
+                            Next
                         </Button>
                     </div>
 
@@ -656,7 +658,7 @@ export default function Main() {
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <div className="lpc-order" style={styles.canvasContainer}>
-                            <label htmlFor="lpcOrder" style={{ color: "#f0ead2" }}>LPC Order:</label>
+                            <label htmlFor="lpcOrder" style={{ color: "#f0ead2", fontSize: '1.2rem' }}>LPC Order:</label>
                             <input
                                 type="number"
                                 id="lpcOrder"
@@ -665,8 +667,10 @@ export default function Main() {
                                 min="1"
                                 max="100"
                             />
-                            <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
-                                Adjust the LPC order to change the spectral envelope ("wave") detail. Default is 45, which is necessary to capture the details at this sample rate.
+                            <div style={{ fontSize: '1.1rem', color: '#f0ead2', marginTop: '0.5rem' }}>
+                                Adjust the LPC order to change the wave detail level.
+                                <br />
+                                Default is 45, which is necessary to capture the details at this sample rate.
                             </div>
                         </div>
                     </Offcanvas.Body>
@@ -682,33 +686,37 @@ export default function Main() {
 
 const styles = StyleSheet.create({
     main: {
-        color: '#05668d',
+        color: '#F2F1EB',
     },
     header: {
         textAlign: 'center',
         marginBottom: '1rem',
-        backgroundColor: '#05668d',
-        color: '#f0ead2',
+        backgroundColor: '#F2F1EB',
+        color: '#13120F',
         fontSize: '2rem',
-        fontWeight: 'bold',
+        fontFamily: 'Avigea, serif',
+        letterSpacing: '0.05em',
     },
     submodule: {
         textAlign: 'center',
         marginBottom: '1rem',
-        backgroundColor: '#05668d',
-        color: '#f0ead2',
+        backgroundColor: '#F2F1EB',
+        color: '#13120F',
         fontSize: '1.25rem',
         fontWeight: 'bold',
         boxShadow: '0 4px 15px rgb(0, 57, 51)',
-
+fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
         padding: '1rem',
     },
     vowelContainer: {
         padding: '0.25rem',
         borderRadius: '0.25rem',
-        backgroundColor: '#05668d',
-        color: '#f0ead2',
+        backgroundColor: '#F2F1EB',
+        color: '#13120F',
         fontSize: '1.5rem',
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
     },
     vowelSelect: {
         marginLeft: '0.5rem',
@@ -716,41 +724,52 @@ const styles = StyleSheet.create({
         borderRadius: '0.25rem',
         border: '1px solid #6c584c',
         backgroundColor: '#f0ead2',
-        color: '#05668d',
+        color: '#13120F',
         fontSize: '1.5rem',
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
     },
     buttons: {
         backgroundColor: '#f0ead2',
-        color: '#05668d',
+        color: '#13120F',
         hover: '#f0ead2',
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
     },
     canvasContainer: {
         fontSize: '1rem',
-        color: '#05668d',
+        color: '#13120F',
         fontWeight: 'bold',
         textAlign: 'center',
     },
     audioPlayer: {
         padding: '0.25rem',
         borderRadius: '0.25rem',
-        backgroundColor: '#05668d',
+        backgroundColor: '#F2F1EB',
         color: '#f0ead2',
-        fontSize: '1rem'
+        fontSize: '1rem',
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
     },
     offcanva: {
-        backgroundColor: '#028090',
-        color: '#f0ead2'
+        backgroundColor: '#00a896',
+        color: '#f0ead2',
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
+        fontSize: '1.5rem',
     },
     ofLinks: {
         color: '#f0ead2',
-        backgroundColor: '#028090',
-        fontSize: '1rem',
+        backgroundColor: '#00a896',
+        fontSize: '1.1rem',
         marginBottom: '0.5rem',
         // hover effect
         hover: {
-            color: '#05668d', backgroundColor: '#f0ead2'
+            color: '#F3540F', backgroundColor: '#f0ead2'
 
-        }
+        },
+        fontFamily: 'Nexa-Heavy, sans-serif',
+        letterSpacing: '0.05em',
     }
 
 });

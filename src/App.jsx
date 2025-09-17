@@ -9,7 +9,7 @@ import SubmoduleDropdown from './SubmoduleDropdown';
 export default function App() {
   return (
     <Routes>
-      <Route path="/"     element={<Home />} />
+      <Route path="/" element={<Home />} />
       <Route path="/modules" element={<Modules />} />
       <Route path="/main" element={<Main />} />
       <Route path="/VowelSubmodules" element={<VowelSubmodules />} />

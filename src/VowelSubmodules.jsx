@@ -1,4 +1,5 @@
-import SubmoduleDropdown from './SubmoduleDropdown'
+import SubmoduleDropdown from './SubmoduleDropdown';
+import './App.css';
 
 export default function VowelSubmodules() {
   const vowelItems = [
@@ -9,7 +10,6 @@ export default function VowelSubmodules() {
     { label: 'Sentence', path: '../Main?submodule=Sentence' }
   ];
 
-
   return (
     <div
       style={{
@@ -18,12 +18,12 @@ export default function VowelSubmodules() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        background: '#05668d',
+        background: '#F2F1EB',
       }}
     >
       <div
         style={{
-          background: '#05668d',
+          background: '#F2F1EB',
           borderRadius: '0.75rem',
           boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
           padding: '2.5rem 2rem',
@@ -38,9 +38,10 @@ export default function VowelSubmodules() {
             marginBottom: 24,
             fontWeight: 700,
             fontSize: '2.5rem',
-            color: '#f0f3bd',
-            letterSpacing: '1px',
+            color: '#13120F',
             textAlign: 'center',
+            fontFamily: 'Avigea, serif',
+            letterSpacing: '0.08em',
           }}
         >
           Vowel Modules
