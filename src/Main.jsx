@@ -78,7 +78,7 @@ export default function Main() {
 
     const [userAudioLPC, setUserAudioLPC] = useState(null);
     const [nativeAudioLPC, setNativeAudioLPC] = useState(null);
-    const foreignAudioLPC = useState(null);
+    const [foreignAudioLPC, setForeignAudioLPC] = useState(null);
 
 
 
@@ -602,7 +602,7 @@ export default function Main() {
                         </Button>
                     </div>
 
-                    <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} />
+                    <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} message={"Click play to hear target audio"}/>
 
                     <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
                         <select
