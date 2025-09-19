@@ -48,6 +48,7 @@ export default function StressSubmodules() {
         <div style={{ width: '100%', marginBottom: 16 }}>
           <SubmoduleDropdown
             items={stressItems}
+            moduleType="Stress"
           />
         </div>
       </div>
