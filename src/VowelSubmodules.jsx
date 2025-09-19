@@ -49,6 +49,7 @@ export default function VowelSubmodules() {
         <div style={{ width: '100%', marginBottom: 16 }}>
           <SubmoduleDropdown
             items={vowelItems}
+            moduleType="Vowel"
           />
         </div>
       </div>

@@ -36,6 +36,19 @@ export default function Main() {
     // Toggle to adjust playback speed
     const speeds = [1, 0.75, 0.5, 0.25];
     const [currSpeed, setCurrSpeed] = useState(1); // default speed
+    // moduleType = Vowel or Stress, L1 folder = L1 speaker, L2 folder = L2 speaker
+    const [moduleType, setModuleType] = useState(getQueryParam('module') || 'Vowel');
+
+  useEffect(() => {
+    const handlePop = () => {
+      setSelectedSubmodule(getQueryParam('submodule') || 'Segment');
+      setModuleType(getQueryParam('module') || 'Vowel');
+    };
+    handlePop();
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, []);
+
     const adjustPlaybackSpeed = newRate => {
         if (audioElementRef.current) {
             audioElementRef.current.playbackRate = newRate;
@@ -243,7 +256,6 @@ export default function Main() {
         { label: '[u]', value: 'u' },
     ];
     //add state for module (vowel or stress)
-    const [selectedModule, setSelectedModule] = useState(getQueryParam('module') || 'Vowel');
 
     // Add state for submodule
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
@@ -397,7 +409,8 @@ export default function Main() {
                 const ctx = audioCtx.current || new (window.AudioContext || window.webkitAudioContext)();
                 // remove highlighting tags to get the full stimulus file name
                 let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "") //TODO: this is cursed
-                const url = '/audio/' + stimTrim + ".wav";
+                const folder = moduleType === 'Stress' ? 'l2' : 'l1'; 
+                const url = '/audio/' + folder + '/' + stimTrim + '.wav'; // e.g.: /audio/l1/<file>.wav
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
                 if (isMounted) {
@@ -499,7 +512,7 @@ export default function Main() {
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <Nav className="flex-column">
-                            <Nav.Link href="../Main?submodule=Segment" onClick={handleClose} style={styles.ofLinks}
+                            <Nav.Link href={`../Main?module=${encodeURIComponent(moduleType)}&submodule=Segment`} onClick={handleClose} style={styles.ofLinks}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.color = styles.ofLinks.hover.color;
                                     e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
@@ -511,7 +524,7 @@ export default function Main() {
                             >
                                 Segment
                             </Nav.Link>
-                            <Nav.Link href="../Main?submodule=Syllable" onClick={handleClose} style={styles.ofLinks}
+                            <Nav.Link href={`../Main?module=${encodeURIComponent(moduleType)}&submodule=Syllable`} onClick={handleClose} style={styles.ofLinks}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.color = styles.ofLinks.hover.color;
                                     e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
@@ -522,7 +535,7 @@ export default function Main() {
                                 }}>
                                 Syllable
                             </Nav.Link>
-                            <Nav.Link href="../Main?submodule=Word" onClick={handleClose} style={styles.ofLinks}
+                            <Nav.Link href={`../Main?module=${encodeURIComponent(moduleType)}&submodule=Word`} onClick={handleClose} style={styles.ofLinks}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.color = styles.ofLinks.hover.color;
                                     e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
@@ -533,7 +546,7 @@ export default function Main() {
                                 }}>
                                 Word
                             </Nav.Link>
-                            <Nav.Link href="../Main?submodule=Phrase" onClick={handleClose} style={styles.ofLinks}
+                            <Nav.Link href={`../Main?module=${encodeURIComponent(moduleType)}&submodule=Phrase`} onClick={handleClose} style={styles.ofLinks}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.color = styles.ofLinks.hover.color;
                                     e.currentTarget.style.backgroundColor = styles.ofLinks.hover.backgroundColor;
