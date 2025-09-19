@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { loadWavFile } from './audioUtils';
 import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootstrap';
 import { ReactComponent as Logo } from "./assets/img/logo.svg";
-import { StyleSheet } from 'react-native';
 import { lpc, drawSpectralEnvelope } from './speechProcessingUtils';
+import StimulusBar from './components/StimulusBar.jsx';
+import styles from './styles';
 import './App.css';
 
 // Add this helper to parse query params
@@ -393,7 +394,7 @@ export default function Main() {
             try {
                 const ctx = audioCtx.current || new (window.AudioContext || window.webkitAudioContext)();
                 // remove highlighting tags to get the full stimulus file name
-                let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "")
+                let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "") //TODO: this is cursed
                 const url = '/audio/' + stimTrim + ".wav";
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
@@ -599,6 +600,8 @@ export default function Main() {
                         </Button>
                     </div>
 
+                    <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} />
+
                     <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
                         <select
                             id="vowelSelect"
@@ -683,94 +686,3 @@ export default function Main() {
         </div>
     )
 }
-
-const styles = StyleSheet.create({
-    main: {
-        color: '#F2F1EB',
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: '1rem',
-        backgroundColor: '#F2F1EB',
-        color: '#13120F',
-        fontSize: '2rem',
-        fontFamily: 'Avigea, serif',
-        letterSpacing: '0.05em',
-    },
-    submodule: {
-        textAlign: 'center',
-        marginBottom: '1rem',
-        backgroundColor: '#F2F1EB',
-        color: '#13120F',
-        fontSize: '1.25rem',
-        fontWeight: 'bold',
-        boxShadow: '0 4px 15px rgb(0, 57, 51)',
-fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-        padding: '1rem',
-    },
-    vowelContainer: {
-        padding: '0.25rem',
-        borderRadius: '0.25rem',
-        backgroundColor: '#F2F1EB',
-        color: '#13120F',
-        fontSize: '1.5rem',
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-    },
-    vowelSelect: {
-        marginLeft: '0.5rem',
-        padding: '0.25rem',
-        borderRadius: '0.25rem',
-        border: '1px solid #6c584c',
-        backgroundColor: '#f0ead2',
-        color: '#13120F',
-        fontSize: '1.5rem',
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-    },
-    buttons: {
-        backgroundColor: '#f0ead2',
-        color: '#13120F',
-        hover: '#f0ead2',
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-    },
-    canvasContainer: {
-        fontSize: '1rem',
-        color: '#13120F',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    audioPlayer: {
-        padding: '0.25rem',
-        borderRadius: '0.25rem',
-        backgroundColor: '#F2F1EB',
-        color: '#f0ead2',
-        fontSize: '1rem',
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-    },
-    offcanva: {
-        backgroundColor: '#00a896',
-        color: '#f0ead2',
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-        fontSize: '1.5rem',
-    },
-    ofLinks: {
-        color: '#f0ead2',
-        backgroundColor: '#00a896',
-        fontSize: '1.1rem',
-        marginBottom: '0.5rem',
-        // hover effect
-        hover: {
-            color: '#F3540F', backgroundColor: '#f0ead2'
-
-        },
-        fontFamily: 'Nexa-Heavy, sans-serif',
-        letterSpacing: '0.05em',
-    }
-
-});
-
