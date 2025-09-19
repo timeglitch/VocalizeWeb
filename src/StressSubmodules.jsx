@@ -3,10 +3,10 @@ import './App.css';
 
 export default function StressSubmodules() {
   const stressItems = [
-    { label: 'Segment',  path: '../Main?submodule=Segment' },
-    { label: 'Word',     path: '../Main?submodule=Word' },
-    { label: 'Phrase',   path: '../Main?submodule=Phrase' },
-    { label: 'Sentence', path: '../Main?submodule=Sentence' }
+    { label: 'Segment',  path: '../Main?module=Stress&submodule=Segment' },
+    { label: 'Word',     path: '../Main?module=Stress&submodule=Word' },
+    { label: 'Phrase',   path: '../Main?module=Stress&submodule=Phrase' },
+    { label: 'Sentence', path: '../Main?module=Stress&submodule=Sentence' }
   ];
 
   return (

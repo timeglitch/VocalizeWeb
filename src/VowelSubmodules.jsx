@@ -3,11 +3,11 @@ import './App.css';
 
 export default function VowelSubmodules() {
   const vowelItems = [
-    { label: 'Segment',  path: '../Main?submodule=Segment' },
-    { label: 'Syllable', path: '../Main?submodule=Syllable' },
-    { label: 'Word',     path: '../Main?submodule=Word' },
-    { label: 'Phrase',   path: '../Main?submodule=Phrase' },
-    { label: 'Sentence', path: '../Main?submodule=Sentence' }
+    { label: 'Segment',  path: '../Main?module=Vowel&submodule=Segment' },
+    { label: 'Syllable', path: '../Main?module=Vowel&submodule=Syllable' },
+    { label: 'Word',     path: '../Main?module=Vowel&submodule=Word' },
+    { label: 'Phrase',   path: '../Main?module=Vowel&submodule=Phrase' },
+    { label: 'Sentence', path: '../Main?module=Vowel&submodule=Sentence' }
   ];
 
   return (

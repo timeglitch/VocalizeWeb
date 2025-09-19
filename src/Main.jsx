@@ -242,7 +242,9 @@ export default function Main() {
         { label: '[o]', value: 'o' },
         { label: '[u]', value: 'u' },
     ];
-    
+    //add state for module (vowel or stress)
+    const [selectedModule, setSelectedModule] = useState(getQueryParam('module') || 'Vowel');
+
     // Add state for submodule
     const [selectedSubmodule, setSelectedSubmodule] = useState(getQueryParam('submodule') || 'Segment');
     // Add state for stimulus
