@@ -437,7 +437,7 @@ export default function Main() {
                         ""
                     )
                     .replace("</span>", ""); //TODO: this is cursed
-                const folder = moduleType === "Stress" ? "l2" : "l1";
+                const folder = moduleType === "Stress" ? "l2" : "l1"; //TODO: we actually need to load two files in stress module, one for L1 and one for L2
                 const url = "/audio/" + folder + "/" + stimTrim + ".wav"; // e.g.: /audio/l1/<file>.wav
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
@@ -450,6 +450,7 @@ export default function Main() {
                 }
             } catch (e) {
                 console.error("Failed to load wav:", e);
+                // TODO: handle error more gracefully. Right now, all we get is a console error, and the audio element just plays the last successful file
             }
         };
         loadWav().catch((e) => console.error("uncaught promise ", e));
@@ -513,6 +514,24 @@ export default function Main() {
     const toggleOpen = () => setSettingsOpen(true);
     const toggleClose = () => setSettingsOpen(false);
 
+    // Shared hover handlers for nav links
+    const onLinkHover = (e) => {
+        e.currentTarget.style.color = styles.ofLinks.hover.color;
+        e.currentTarget.style.backgroundColor =
+            styles.ofLinks.hover.backgroundColor;
+    };
+    const onLinkOut = (e) => {
+        e.currentTarget.style.color = styles.ofLinks.color;
+        e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
+    };
+    const submodulesList = [
+        "Segment",
+        "Syllable",
+        "Word",
+        "Phrase",
+        "Sentence",
+    ];
+
     return (
         <div className="main-container" style={{ backgroundColor: "#F2F1EB" }}>
             <Container className="main">
@@ -569,113 +588,24 @@ export default function Main() {
                     style={styles.offcanva}
                 >
                     <Offcanvas.Header closeButton>
-                        <Offcanvas.Title>Menu</Offcanvas.Title>
+                        <Offcanvas.Title>Submodules Menu</Offcanvas.Title>
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <Nav className="flex-column">
-                            <Nav.Link
-                                href={`../Main?module=${encodeURIComponent(
-                                    moduleType
-                                )}&submodule=Segment`}
-                                onClick={handleClose}
-                                style={styles.ofLinks}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
-                            >
-                                Segment
-                            </Nav.Link>
-                            <Nav.Link
-                                href={`../Main?module=${encodeURIComponent(
-                                    moduleType
-                                )}&submodule=Syllable`}
-                                onClick={handleClose}
-                                style={styles.ofLinks}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
-                            >
-                                Syllable
-                            </Nav.Link>
-                            <Nav.Link
-                                href={`../Main?module=${encodeURIComponent(
-                                    moduleType
-                                )}&submodule=Word`}
-                                onClick={handleClose}
-                                style={styles.ofLinks}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
-                            >
-                                Word
-                            </Nav.Link>
-                            <Nav.Link
-                                href={`../Main?module=${encodeURIComponent(
-                                    moduleType
-                                )}&submodule=Phrase`}
-                                onClick={handleClose}
-                                style={styles.ofLinks}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
-                            >
-                                Phrase
-                            </Nav.Link>
-                            <Nav.Link
-                                href="../Main?submodule=Sentence"
-                                onClick={handleClose}
-                                style={styles.ofLinks}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
-                            >
-                                Sentence
-                            </Nav.Link>
+                            {submodulesList.map((sub) => (
+                                <Nav.Link
+                                    key={sub}
+                                    href={`../Main?module=${encodeURIComponent(
+                                        moduleType
+                                    )}&submodule=${encodeURIComponent(sub)}`}
+                                    onClick={handleClose}
+                                    style={styles.ofLinks}
+                                    onMouseOver={onLinkHover}
+                                    onMouseOut={onLinkOut}
+                                >
+                                    {sub}
+                                </Nav.Link>
+                            ))}
                             <Nav.Link
                                 href="../Modules"
                                 onClick={handleClose}
@@ -683,18 +613,8 @@ export default function Main() {
                                     ...styles.ofLinks,
                                     fontWeight: "bold",
                                 }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.hover.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.hover.backgroundColor;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.color =
-                                        styles.ofLinks.color;
-                                    e.currentTarget.style.backgroundColor =
-                                        styles.ofLinks.backgroundColor;
-                                }}
+                                onMouseOver={onLinkHover}
+                                onMouseOut={onLinkOut}
                             >
                                 Back to Modules
                             </Nav.Link>

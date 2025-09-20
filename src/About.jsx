@@ -35,6 +35,70 @@ export default function About() {
                     <br />
                     Feel free to contribute or report issues!
                 </p>
+                <details>
+                    <summary style={{ cursor: "pointer", fontWeight: "bold" }}>
+                        Summarized Project Abstract
+                    </summary>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        Previous research emphasizes the challenges L2 Spanish
+                        learners face due to transfer of L1 U.S. English vowel
+                        reduction in unstressed contexts and centralization of
+                        the vowel space (Reeder, 1999; Stevens, 2011; Cobb &
+                        Simonet, 2015). Vowel sounds serve as the foundational
+                        elements of word nuclei in Spanish, and difficulties
+                        with their production can negatively impact learners’
+                        intelligibility and comprehensibility (the degree to
+                        which they are understood) in their L2 Spanish (Levis,
+                        2005; Derwing & Munro, 2012; Nagle & Huensch, 2020).
+                        Despite many gaps in pronunciation teaching in current
+                        Spanish classrooms (Counselman, 2015; Offerman, 2024),
+                        visual acoustic feedback (VF) has been used to address
+                        vowel learning challenges in both L2 English (Dowd et
+                        al., 1998; Kartushina et al., 2015) and L2 Spanish
+                        (Olson & Offerman, 2021). VF helps learners enhance
+                        their pronunciation through real-time or delayed visual
+                        cues. Using VF in their novel staRt app, Peterson et al.
+                        (2022) observed improved production of the North
+                        American English /ɹ/ in four children. While various
+                        apps exist, none have applied real-time VF to Spanish
+                        vowel learning as effectively as staRt has for English
+                        /ɹ/. Additionally, very few studies have investigated
+                        learner goals and aspirations as a qualitative component
+                        within a mixed methods approach to Spanish pronunciation
+                        learning; to date, the only known example is Nagle
+                        (2018). The present study addresses these understudied
+                        gaps by creating and piloting an app, VOCAL-ize, adapted
+                        from Peterson et al.’s (2022){" "}
+                        <a href="https://bitslabstart.com/">staRt app</a> to
+                        support L2 Spanish vowel learning for L1 American
+                        English speakers. The app features modules targeting
+                        Spanish monophthongal vowels ([i, e, a, o, u]) in
+                        stressed and unstressed contexts, addresses English
+                        vowel reduction, and provides tutorials on acoustic
+                        features. The app will be piloted with a small group of
+                        learners, and compared to those not using the app. Vowel
+                        production and communicability (intelligibility and
+                        comprehensibility) will be measured through carrier
+                        phrase tasks and spontaneous speech tasks (Nagle &
+                        Huensch, 2020) at multiple times. Semi-structured
+                        interviews grounded in Dörnyei’s (2009) L2 Motivational
+                        Self System (L2MSS) will be conducted at pre- and
+                        post-tests. Vowel production data will be analyzed using
+                        Praat and spontaneous data will be evaluated by L1
+                        Spanish speakers. Production data will be analyzed using
+                        mixed effects linear regression with intervention,
+                        timepoint, and extralinguistic factors as predictor
+                        variables in RStudio. Interview data will be transcribed
+                        (conventions by Pavlenko 2007) and analyzed using
+                        thematic analysis guided by Dörnyei’s L2MSS constructs
+                        of L2 ideal, current, and ought-to selves to understand
+                        recurring themes among participants. In sum, the
+                        overarching goal of this research is to provide insights
+                        that enhance Spanish pronunciation instruction and
+                        strengthen L2 learner communication with
+                        Spanish-speaking communities.
+                    </div>
+                </details>
             </div>
             <div>
                 <Button
