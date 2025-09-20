@@ -4,6 +4,7 @@ import { Container, Button, Nav, Navbar, Offcanvas, NavItem } from 'react-bootst
 import { ReactComponent as Logo } from "./assets/img/logo.svg";
 import { lpc, drawSpectralEnvelope } from './speechProcessingUtils';
 import StimulusBar from './components/StimulusBar.jsx';
+import PlaybackSpeed from './components/PlaybackSpeed.jsx';
 import styles from './styles';
 import './App.css';
 
@@ -11,24 +12,6 @@ import './App.css';
 function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
     return params.get(name);
-}
-
-export function PlaybackSpeed({ currSpeed, onChange, speeds }) {
-    return (
-        <div className="toggle-speed" style={{ color: '#13120F' }}>
-            <label htmlFor="speedSelect">Playback Speed:</label>
-            <select
-                id="speedSelect"
-                value={currSpeed}
-                onChange={onChange}
-                style={{ marginLeft: '0.5rem' }}
-            >
-                {speeds.map(s => (
-                    <option key={s} value={s}>{s}x</option>
-                ))}
-            </select>
-        </div>
-    );
 }
 
 
@@ -60,7 +43,8 @@ export default function Main() {
         console.log("Playback speed set to:", newRate);
     };
 
-    //TODO: Make firefox compatible
+    //TODO: Make firefox compatible, move this to the beginning of the app so it shows only once
+    //TODO: add warning for mobile, make mobile compatible
     useEffect(() => {
         const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
         if (isFirefox) {
@@ -591,14 +575,7 @@ export default function Main() {
 
                 {/* Stimulus display section */}
                 <div className="stimulus-section" style={styles.submodule}>
-                    {/* Audio controls for wav file */}
-                    <div style={{ marginBottom: '0rem' }}>
-                        <audio
-                            ref={wavAudioRef}
-                            src={process.env.PUBLIC_URL + '/audio/palabra.wav'}
-                            controls hidden
-                        />
-                    </div>
+                    {/* Stimulus display and controls */}
                     Say:&nbsp;
                     {selectedStimulus ? (
                         <span dangerouslySetInnerHTML={{ __html: selectedStimulus }} />
@@ -629,6 +606,20 @@ export default function Main() {
                             ))}
                         </select>
                     </div>
+
+                    {/* --- Live audio capture and visualization --- */}
+                    <div className="canvas-container" style={styles.canvasContainer}>
+                        <canvas ref={canvasRef} className="canvas" />
+                    </div>
+
+                    <div style={{ marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2' }}>
+                        <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
+                    </div>
+
+                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
+                        {rec ? 'Stop' : 'Start'} Capture Audio
+                    </Button>
+                    
                     {/* --- Playback UI & LPC analysis button --- */}
                     {audioURL && (
                         <div style={styles.audioPlayer}>
@@ -636,7 +627,7 @@ export default function Main() {
                                 controls
                                 src={audioURL}
                                 ref={audioElementRef}
-                                style={{ width: '50%' }}
+                                style={{ width: '100%' }}
                             />
                             <div style={{ fontSize: '0.9rem', color: '#f0ead2', marginTop: '0.5rem' }}>
                                 Playback your recording above.
@@ -644,31 +635,6 @@ export default function Main() {
                             <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
                         </div>
                     )}
-                    <div className="canvas-container" style={styles.canvasContainer}>
-                        <canvas ref={canvasRef} className="canvas" />
-                    </div>
-                    <div className="controls">
-                        {/* Hear native speaker's recording  */}
-                        <div class="hear" style={{ marginBottom: '0.5rem' }}>
-                            <Button style={{ ...styles.buttons }}
-                                onClick={() => {
-                                    if (wavAudioRef.current) {
-                                        wavAudioRef.current.play();
-                                        wavAudioRef.current.addEventListener('ended', () =>
-                                            adjustPlaybackSpeed(1),
-                                            { once: true });
-                                    }
-                                }}>
-                                Hear It
-                            </Button>
-                            <div style={{ marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2' }}>
-                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
-                            </div>
-                        </div>
-                    </div>
-                    <Button variant="primary" onClick={startButton} style={styles.buttons}>
-                        {rec ? 'Stop' : 'Start'} Capture Audio
-                    </Button>
                 </div>
                 <Offcanvas show={settingsOpen} onHide={toggleClose} placement="bottom" style={styles.offcanva}>
                     <Offcanvas.Header closeButton>

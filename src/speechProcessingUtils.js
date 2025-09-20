@@ -1,4 +1,4 @@
-const DEFAULT_MAX_FREQ = 5000; // Hz
+const DEFAULT_MAX_FREQ = 3000; // Hz
 
 /**
  * Applies a Hamming window to the buffer.
@@ -268,6 +268,8 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     return finalResponse;
 }
 
+
+//TODO: change colors to match theme
 /**
  * Draws the spectral envelope on the canvas, scaled to 0-5000Hz.
  * Also adds frequency labels to the X-axis.

@@ -6,7 +6,7 @@ const StimulusBar = ({ src, audioElementRef, message }) => {
     <>
     {message || "Click play to hear the stimulus."}
     <audio controls ref={audioElementRef} style={styles.audioPlayer}>
-        <source src={src} type="audio/mpeg" style={{ width: '100%' }} />
+        <source src={src} type="audio/mpeg" />
         Your browser does not support the audio element.
     </audio>
     </>
