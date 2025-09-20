@@ -9,7 +9,8 @@ export function applyWindow(buffer) {
     const N = buffer.length;
     const windowed = new Float32Array(N);
     for (let i = 0; i < N; i++) {
-        windowed[i] = buffer[i] * (0.54 - 0.46 * Math.cos(2 * Math.PI * i / (N - 1))); // Hamming window coefficients
+        windowed[i] =
+            buffer[i] * (0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (N - 1))); // Hamming window coefficients
     }
     return windowed;
 }
@@ -20,21 +21,25 @@ export function applyWindow(buffer) {
  * @param {number} p The order of the LPC analysis.
  * @returns {{a: Float32Array | null, err: number}} The LPC coefficients and the prediction error.
  */
-export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: false}) {
+export function lpc(
+    signal,
+    p,
+    opts = { window: "hamming", preEmph: 0, fft: false }
+) {
     const n = signal.length;
     if (p >= n) return { a: null, err: 0 };
 
     // Apply windowing if specified
     if (opts.window === "hamming") {
         signal = applyWindow(signal);
-    }
-    else {
+    } else {
         console.log("No windowing applied");
     }
 
     // pre-emphasis filtering for stability pre-autocorrelation
     const preEmph = opts.preEmph || 0.98; // default to 0.98 if not provided
-    if (preEmph > 0) { // only apply if preEmph > 0, otherwise skip
+    if (preEmph > 0) {
+        // only apply if preEmph > 0, otherwise skip
         const preSignal = new Float32Array(n); // copies pre-emphed signal while maintaining original
         preSignal[0] = signal[0]; // first sample unchanged
         for (let i = 1; i < n; i++) {
@@ -58,7 +63,8 @@ export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: false
     let a_prev = new Float32Array(p + 1);
     let err = R[0];
 
-    if (Math.abs(err) < 1e-6) { // If signal is silent, return zero coefficients
+    if (Math.abs(err) < 1e-6) {
+        // If signal is silent, return zero coefficients
         return { a: new Float32Array(p + 1), err: 0 };
     }
 
@@ -76,7 +82,7 @@ export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: false
             a[j] = a_prev[j] + k * a_prev[i - j];
         }
 
-        err *= (1 - k * k);
+        err *= 1 - k * k;
 
         // Save current 'a' for next iteration
         for (let j = 1; j <= i; j++) a_prev[j] = a[j];
@@ -85,7 +91,7 @@ export function lpc(signal, p, opts = {window: "hamming", preEmph: 0, fft: false
 }
 /**
  * TODO: Cam, where did you get this filter from?
- * 
+ *
  * Simple high-pass filter for removing low frequencies.
  * @param {Float32Array} x input signal
  * @param {number} sampleRate sample rate (HZ)
@@ -160,7 +166,7 @@ function emaSmooth(prev, curr, alpha = 0.8) {
  * @returns {Float32Array}  modified coefficients
  */
 export function bandwidthExpand(a, bwHz = 60, sampleRate = 44100) {
-    const gamma = Math.exp(-Math.PI * bwHz / sampleRate); // expansion factor
+    const gamma = Math.exp((-Math.PI * bwHz) / sampleRate); // expansion factor
     const output = new Float32Array(a.length);
     output[0] = a[0];
     // filtering applied to all but first coeff so that gain is unchanged
@@ -173,13 +179,20 @@ let prevFreqResponse3 = null;
 
 /**
  * Draws the LPC curve on the given canvas context.
- * @param {canvasContext} ctx 
- * @param {Float32Array} coeffs 
- * @param {string} color 
- * @param {Float32Array|null} prevFreqResponse 
+ * @param {canvasContext} ctx
+ * @param {Float32Array} coeffs
+ * @param {string} color
+ * @param {Float32Array|null} prevFreqResponse
  * @returns {Float32Array} the final frequency response, used for smoothing next frame
  */
-function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = { fft: false, freqSmoothWindow: 7}) {
+function drawLPCCurve(
+    ctx,
+    coeffs,
+    color,
+    sampleRate,
+    prevFreqResponse,
+    opts = { fft: false, freqSmoothWindow: 7 }
+) {
     if (!coeffs || coeffs.length < 2) {
         // nothing to draw
         console.warn("No LPC coefficients to draw");
@@ -187,14 +200,14 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     }
 
     const freqSmoothWindow = opts.freqSmoothWindow || 7; // odd number
-    const temporalAlpha = typeof opts.temporalAlpha === 'number' ? opts.temporalAlpha : 0.55;
+    const temporalAlpha =
+        typeof opts.temporalAlpha === "number" ? opts.temporalAlpha : 0.55;
     const applyBandwidthExpand = opts.applyBandwidthExpand || false;
     const bwHz = opts.bwHz || 60;
     const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
     const usefft = opts.fft || false;
 
-
-        // Calculate and Draw LPC Curve in dB
+    // Calculate and Draw LPC Curve in dB
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -202,7 +215,8 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
 
     const numPoints = Math.max(2, Math.floor(canvas.width));
     const freqResponse = new Float32Array(numPoints);
-    let maxDb = -Infinity, minDb = Infinity;
+    let maxDb = -Infinity,
+        minDb = Infinity;
 
     // Optionally expand bandwidth to stabilize poles (non-destructive)
     if (!coeffs || coeffs.length < 2) {
@@ -216,8 +230,9 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     // compute frequency response in decibels
     for (let i = 0; i < numPoints; i++) {
         const freq = (i / numPoints) * maxFreq;
-        const w = 2 * Math.PI * freq / sampleRate;
-        let re = 1.0, im = 0.0;
+        const w = (2 * Math.PI * freq) / sampleRate;
+        let re = 1.0,
+            im = 0.0;
         for (let k = 1; k < coeffs.length; k++) {
             const ck = coeffs[k];
             re += ck * Math.cos(k * w);
@@ -236,38 +251,46 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
     }
 
     // local smoothing
-    const localSmoothed = freqSmoothWindow > 1 ? smoothArray(freqResponse, freqSmoothWindow) : freqResponse; // no smoothing if window size <= 1
+    const localSmoothed =
+        freqSmoothWindow > 1
+            ? smoothArray(freqResponse, freqSmoothWindow)
+            : freqResponse; // no smoothing if window size <= 1
 
     let finalResponse;
     // smoothing across frames
     if (prevFreqResponse) {
-        finalResponse = emaSmooth(prevFreqResponse, localSmoothed, temporalAlpha);
-    }
-    else {
+        finalResponse = emaSmooth(
+            prevFreqResponse,
+            localSmoothed,
+            temporalAlpha
+        );
+    } else {
         finalResponse = localSmoothed;
     }
 
-    // recompute min/max 
-    maxDb = -Infinity; minDb = Infinity;
+    // recompute min/max
+    maxDb = -Infinity;
+    minDb = Infinity;
     for (let i = 0; i < finalResponse.length; i++) {
         const v = finalResponse[i];
         if (v > maxDb) maxDb = v;
         if (v < minDb) minDb = v;
     }
     // prevent weird ranges
-    const range = (maxDb - minDb) || 1;
+    const range = maxDb - minDb || 1;
 
     for (let i = 0; i < finalResponse.length; i++) {
         const x = i;
-        const y = ((maxDb - finalResponse[i]) / range) * (canvas.height - 25) + 5;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const y =
+            ((maxDb - finalResponse[i]) / range) * (canvas.height - 25) + 5;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
     }
     //console.log("Min dB:", minDb, "Max dB:", maxDb);
     ctx.stroke();
 
     return finalResponse;
 }
-
 
 //TODO: change colors to match theme
 /**
@@ -280,18 +303,28 @@ function drawLPCCurve(ctx, coeffs, color, sampleRate, prevFreqResponse, opts = {
  * @param {Object} params.vowelStimuli The vowel stimuli data.
  * @param {string} params.selectedVowel The selected vowel.
  */
-export function drawSpectralEnvelope({ lpcCoefficients, lpcCoefficients2 = null, lpcCoefficients3 = null, sampleRate, canvasContext, vowelStimuli, selectedVowel, onlyDrawAxes = false, opts = {} }) {
+export function drawSpectralEnvelope({
+    lpcCoefficients,
+    lpcCoefficients2 = null,
+    lpcCoefficients3 = null,
+    sampleRate,
+    canvasContext,
+    vowelStimuli,
+    selectedVowel,
+    onlyDrawAxes = false,
+    opts = {},
+}) {
     const ctx = canvasContext;
     const canvas = ctx.canvas;
     const sr = sampleRate || 44100;
     const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
 
-    ctx.fillStyle = '#1a202c';
+    ctx.fillStyle = "#1a202c";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#374151';
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = '12px Inter';
+    ctx.strokeStyle = "#374151";
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "12px Inter";
 
     // Draw X-axis labels and grid lines
     const numGridLines = 5;
@@ -312,18 +345,44 @@ export function drawSpectralEnvelope({ lpcCoefficients, lpcCoefficients2 = null,
     ctx.lineTo(canvas.width, canvas.height - 20);
     ctx.stroke();
 
-    if (!onlyDrawAxes) {  // If only drawing axes, skip LPC curve
+    if (!onlyDrawAxes) {
+        // If only drawing axes, skip LPC curve
 
-        prevFreqResponse1 = drawLPCCurve(ctx, lpcCoefficients, '#4299e1', sr, prevFreqResponse1, opts); //removed the .slice(0) on these since I don't think it is necessary
+        prevFreqResponse1 = drawLPCCurve(
+            ctx,
+            lpcCoefficients,
+            "#4299e1",
+            sr,
+            prevFreqResponse1,
+            opts
+        ); //removed the .slice(0) on these since I don't think it is necessary
         if (lpcCoefficients2) {
-            prevFreqResponse2 = drawLPCCurve(ctx, lpcCoefficients2, '#48bb78', sr, prevFreqResponse2, opts);
+            prevFreqResponse2 = drawLPCCurve(
+                ctx,
+                lpcCoefficients2,
+                "#48bb78",
+                sr,
+                prevFreqResponse2,
+                opts
+            );
         }
         if (lpcCoefficients3) {
-            prevFreqResponse3 = drawLPCCurve(ctx, lpcCoefficients3, '#ed64a6', sr, prevFreqResponse3, opts);
+            prevFreqResponse3 = drawLPCCurve(
+                ctx,
+                lpcCoefficients3,
+                "#ed64a6",
+                sr,
+                prevFreqResponse3,
+                opts
+            );
         }
     }
 
-    if (!vowelStimuli || !vowelStimuli["Vowel"] || !vowelStimuli["Vowel"][selectedVowel]) {
+    if (
+        !vowelStimuli ||
+        !vowelStimuli["Vowel"] ||
+        !vowelStimuli["Vowel"][selectedVowel]
+    ) {
         return;
     }
     const f1_range = vowelStimuli["Vowel"][selectedVowel]["formant"]["f1"];
@@ -332,8 +391,8 @@ export function drawSpectralEnvelope({ lpcCoefficients, lpcCoefficients2 = null,
     const f1_end = (f1_range[1] / maxFreq) * canvas.width;
     const f2_start = (f2_range[0] / maxFreq) * canvas.width;
     const f2_end = (f2_range[1] / maxFreq) * canvas.width;
-    ctx.fillStyle = 'rgba(245, 101, 101, 0.2)';
-    ctx.strokeStyle = '#f56565';
+    ctx.fillStyle = "rgba(245, 101, 101, 0.2)";
+    ctx.strokeStyle = "#f56565";
     ctx.fillRect(f1_start, 0, f1_end - f1_start, canvas.height - 20);
     ctx.strokeRect(f1_start, 0, f1_end - f1_start, canvas.height - 20);
     ctx.fillRect(f2_start, 0, f2_end - f2_start, canvas.height - 20);
