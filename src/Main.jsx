@@ -62,6 +62,8 @@ export default function Main() {
         }
     }, []);
 
+    // TODO: make mobile compatible
+
     const [lpcOrder, setLpc] = useState(45);
     const [rec, setRec] = useState(false);
     const audioCtx = useRef(null);
@@ -431,14 +433,9 @@ export default function Main() {
                     audioCtx.current ||
                     new (window.AudioContext || window.webkitAudioContext)();
                 // remove highlighting tags to get the full stimulus file name
-                let stimTrim = selectedStimulus
-                    .replace(
-                        /<span style="background: #ffe066; color: #222; padding: 0 2px;">/g,
-                        ""
-                    )
-                    .replace("</span>", ""); //TODO: this is cursed
-                const folder = moduleType === "Stress" ? "l2" : "l1"; //TODO: we actually need to load two files in stress module, one for L1 and one for L2
-                const url = "/audio/" + folder + "/" + stimTrim + ".wav"; // e.g.: /audio/l1/<file>.wav
+                let stimTrim = selectedStimulus.replace(/<span style="background: #ffe066; color: #222; padding: 0 2px;">/g, "").replace("</span>", "") //TODO: this is cursed
+                const folder = moduleType === 'Stress' ? 'l2' : 'l1';
+                const url = '/audio/' + folder + '/' + stimTrim + '.wav'; // e.g.: /audio/l1/<file>.wav
                 console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
                 if (isMounted) {
@@ -513,6 +510,15 @@ export default function Main() {
     const [settingsOpen, setSettingsOpen] = useState(false);
     const toggleOpen = () => setSettingsOpen(true);
     const toggleClose = () => setSettingsOpen(false);
+
+    // TODO come up with a better way to do this
+    function minorText() {
+        if (moduleType === 'Vowel') {
+            return "1. Hear the L1 Spanish speaker:";
+        } else {
+            return "1. Hear the L1 English speaker:";
+        }
+    }
 
     // Shared hover handlers for nav links
     const onLinkHover = (e) => {
@@ -645,7 +651,41 @@ export default function Main() {
                             No stimulus available
                         </span>
                     )}
-                    <div style={{ margin: "1rem 0" }}>
+
+                    <div className="controls">
+                        {/* Hear L1 speaker's recording  */}
+                        <div className="hear" style={{ marginBottom: '0.5rem' }}>
+                            <div style={{ fontSize: '0.9rem', marginRight: '0.5rem' }}>{minorText()}</div>
+                            <audio
+                                controls ref={wavAudioRef}
+                                style={{ width: '50%' }}
+                                onClick={() => {
+                                    if (wavAudioRef.current) {
+                                        wavAudioRef.current.play();
+                                        wavAudioRef.current.addEventListener('ended', () =>
+                                            adjustPlaybackSpeed(1),
+                                            { once: true });
+                                    }
+                                }}>
+                            </audio>
+                        </div>
+                    </div>
+                    {/* --- Playback UI & LPC analysis button --- */}
+                    {audioURL && (
+                        <div style={styles.audioPlayer}>
+                            <div style={{ fontSize: '0.9rem', marginRight: '0.5rem', color: '#13120F' }}>2. Hear yourself:</div>
+                            <audio
+                                controls
+                                src={audioURL}
+                                ref={audioElementRef}
+                                style={{ width: '50%' }}
+                            />
+                            <div style={{ marginLeft: '1rem', fontSize: '1rem', marginTop: '0.25rem', color: '#f0ead2' }}>
+                                <PlaybackSpeed currSpeed={currSpeed} onChange={e => adjustPlaybackSpeed(parseFloat(e.target.value))} speeds={speeds} />
+                            </div>
+                        </div>
+                    )}
+                    <div style={{ margin: '1rem 0' }}>
                         <Button
                             style={{ ...styles.buttons, fontWeight: "bold" }}
                             onClick={() => {
@@ -665,6 +705,9 @@ export default function Main() {
                         className="vowel-selector"
                         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
                     >
+                    {/* <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} /> */}
+
+                    <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
                         <select
                             id="vowelSelect"
                             value={selectedVowel}
