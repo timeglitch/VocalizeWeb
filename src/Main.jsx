@@ -573,24 +573,6 @@ export default function Main() {
                         </span>
                     )}
 
-                    <div className="controls">
-                        {/* Hear L1 speaker's recording  */}
-                        <div className="hear" style={{ marginBottom: '0.5rem' }}>
-                            <div style={{ fontSize: '0.9rem', marginRight: '0.5rem' }}>{minorText()}</div>
-                            <audio
-                                controls ref={wavAudioRef}
-                                style={{ width: '50%' }}
-                                onClick={() => {
-                                    if (wavAudioRef.current) {
-                                        wavAudioRef.current.play();
-                                        wavAudioRef.current.addEventListener('ended', () =>
-                                            adjustPlaybackSpeed(1),
-                                            { once: true });
-                                    }
-                                }}>
-                            </audio>
-                        </div>
-                    </div>
                     {/* --- Playback UI & LPC analysis button --- */}
                     {audioURL && (
                         <div style={styles.audioPlayer}>
@@ -637,10 +619,7 @@ export default function Main() {
 
 
                     }
-                    <div
-                        className="vowel-selector"
-                        style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
-                    >
+                    
                     {/* <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} /> */}
 
                     <div className="vowel-selector" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
