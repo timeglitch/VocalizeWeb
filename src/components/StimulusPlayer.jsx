@@ -105,7 +105,7 @@ export default function StimulusPlayer({
         <StimulusBar
             src={wavAudioRef.current?.src}
             audioElementRef={wavAudioRef}
-            message={"Click play to hear " + (speaker === 'l1' ? "target" : "foreign") + " audio"}
+            message={"Click play to hear " + (speaker === 'l1' ? "L1 Spanish" : "L1 English") + " audio"}
         />
     );
 }

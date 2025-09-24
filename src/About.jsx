@@ -20,7 +20,7 @@ export default function About() {
                     capture variation in Spanish and improve usability.
                 </p>
                 <p>
-                    Our team includes Annika Brody Wallender (Project Lead),
+                    Our team includes Annika Brody Wallander (Project Lead),
                     Frank Jie Zhang (Developer), and Camden Zhu (Developer).
                 </p>
                 <p>
@@ -76,27 +76,7 @@ export default function About() {
                         stressed and unstressed contexts, addresses English
                         vowel reduction, and provides tutorials on acoustic
                         features. The app will be piloted with a small group of
-                        learners, and compared to those not using the app. Vowel
-                        production and communicability (intelligibility and
-                        comprehensibility) will be measured through carrier
-                        phrase tasks and spontaneous speech tasks (Nagle &
-                        Huensch, 2020) at multiple times. Semi-structured
-                        interviews grounded in Dörnyei’s (2009) L2 Motivational
-                        Self System (L2MSS) will be conducted at pre- and
-                        post-tests. Vowel production data will be analyzed using
-                        Praat and spontaneous data will be evaluated by L1
-                        Spanish speakers. Production data will be analyzed using
-                        mixed effects linear regression with intervention,
-                        timepoint, and extralinguistic factors as predictor
-                        variables in RStudio. Interview data will be transcribed
-                        (conventions by Pavlenko 2007) and analyzed using
-                        thematic analysis guided by Dörnyei’s L2MSS constructs
-                        of L2 ideal, current, and ought-to selves to understand
-                        recurring themes among participants. In sum, the
-                        overarching goal of this research is to provide insights
-                        that enhance Spanish pronunciation instruction and
-                        strengthen L2 learner communication with
-                        Spanish-speaking communities.
+                        learners.
                     </div>
                 </details>
             </div>
