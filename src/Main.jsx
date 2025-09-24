@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { loadWavFile } from "./audioUtils";
 import {
     Container,
     Button,
@@ -10,7 +9,7 @@ import {
 } from "react-bootstrap";
 import { ReactComponent as Logo } from "./assets/img/logo.svg";
 import { lpc, drawSpectralEnvelope } from "./speechProcessingUtils";
-import StimulusBar from "./components/StimulusBar.jsx";
+import StimulusPlayer from "./components/StimulusPlayer";
 import PlaybackSpeed from "./components/PlaybackSpeed.jsx";
 import styles from "./styles";
 import "./App.css";
@@ -44,9 +43,6 @@ export default function Main() {
         if (audioElementRef.current) {
             audioElementRef.current.playbackRate = newRate;
         }
-        if (wavAudioRef.current) {
-            wavAudioRef.current.playbackRate = newRate;
-        }
         setCurrSpeed(newRate);
         console.log("Playback speed set to:", newRate);
     };
@@ -78,8 +74,6 @@ export default function Main() {
     const [audioURL, setAudioURL] = useState(null);
     const audioElementRef = useRef(null);
     const [audioBuffer, setAudioBuffer] = useState(null);
-    const [wavBuffer, setWavBuffer] = useState(null);
-    const wavAudioRef = useRef(null);
 
     const vowelstimuli = require("./VowelStimuli.json");
 
@@ -421,88 +415,10 @@ export default function Main() {
 
     // Functions for loading and playing the correct stimulus audio
 
-    // Load the wav file on mount
-    useEffect(() => {
-        let isMounted = true;
-        const loadWav = async () => {
-            if (!selectedStimulus) return;
-            try {
-                const ctx =
-                    audioCtx.current ||
-                    new (window.AudioContext || window.webkitAudioContext)();
-                // remove highlighting tags to get the full stimulus file name
-                let stimTrim = selectedStimulus
-                    .replace(
-                        /<span style="background: #ffe066; color: #222; padding: 0 2px;">/g,
-                        ""
-                    )
-                    .replace("</span>", ""); //TODO: this is cursed
-                const folder = moduleType === "Stress" ? "l2" : "l1"; //TODO: we actually need to load two files in stress module, one for L1 and one for L2
-                const url = "/audio/" + folder + "/" + stimTrim + ".wav"; // e.g.: /audio/l1/<file>.wav
-                console.log("Loading wav file:", url);
-                const buffer = await loadWavFile(url, ctx);
-                if (isMounted) {
-                    setWavBuffer(buffer);
-                    if (wavAudioRef.current) {
-                        wavAudioRef.current.src = url;
-                        console.log("Wav file loaded successfully");
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to load wav:", e);
-                // TODO: handle error more gracefully. Right now, all we get is a console error, and the audio element just plays the last successful file
-            }
-        };
-        loadWav().catch((e) => console.error("uncaught promise ", e));
-        return () => {
-            isMounted = false;
-        };
-    }, [selectedStimulus]);
-
-    // Animate LPC canvas during wav playback
-    useEffect(() => {
-        const audioEl = wavAudioRef.current;
-        if (!audioEl || !wavBuffer) return;
-        let rafId = null;
-        const updateLPC = () => {
-            if (!audioEl.paused && !audioEl.ended) {
-                const sr = wavBuffer.sampleRate;
-                const pos = Math.floor(audioEl.currentTime * sr);
-                const windowSize = 2048;
-                let samples;
-                if (pos + windowSize < wavBuffer.length) {
-                    samples = wavBuffer
-                        .getChannelData(0)
-                        .slice(pos, pos + windowSize);
-                } else {
-                    samples = wavBuffer
-                        .getChannelData(0)
-                        .slice(wavBuffer.length - windowSize);
-                }
-                const { a } = lpc(samples, lpcOrder);
-                if (a && ctxRef.current && canvasRef.current) {
-                    setNativeAudioLPC(a);
-                }
-                rafId = requestAnimationFrame(updateLPC);
-            }
-        };
-        const startRaf = () => {
-            if (!rafId) rafId = requestAnimationFrame(updateLPC);
-        };
-        const stopRaf = () => {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = null;
-        };
-        audioEl.addEventListener("play", startRaf);
-        audioEl.addEventListener("pause", stopRaf);
-        audioEl.addEventListener("ended", stopRaf);
-        return () => {
-            stopRaf();
-            audioEl.removeEventListener("play", startRaf);
-            audioEl.removeEventListener("pause", stopRaf);
-            audioEl.removeEventListener("ended", stopRaf);
-        };
-    }, [wavBuffer, lpcOrder, selectedVowel, vowelstimuli]);
+    // Callback to handle LPC updates from StimulusPlayer
+    const handleNativeLpcUpdate = useCallback((lpcCoeffs) => {
+        setNativeAudioLPC(lpcCoeffs);
+    }, []);
 
     // Offcanvas (hamburger menu) state
     const [show, setShow] = useState(false);
@@ -656,11 +572,26 @@ export default function Main() {
                             Next
                         </Button>
                     </div>
-                    <StimulusBar
-                        src={wavAudioRef.current?.src}
-                        audioElementRef={wavAudioRef}
-                        message={"Click play to hear target audio"}
+                    <StimulusPlayer
+                        selectedStimulus={selectedStimulus}
+                        speaker="l1"
+                        lpcOrder={lpcOrder}
+                        onLpcUpdate={handleNativeLpcUpdate}
+                        currSpeed={currSpeed}
                     />
+                    {
+                        moduleType === "Stress" && (
+                            <StimulusPlayer
+                                selectedStimulus={selectedStimulus}
+                                speaker="l2"
+                                lpcOrder={lpcOrder}
+                                onLpcUpdate={setForeignAudioLPC}
+                                currSpeed={currSpeed}
+                            />
+                        )
+
+
+                    }
                     <div
                         className="vowel-selector"
                         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
