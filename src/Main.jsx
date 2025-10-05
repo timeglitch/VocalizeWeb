@@ -504,7 +504,7 @@ export default function Main() {
         };
     }, [wavBuffer, lpcOrder, selectedVowel, vowelstimuli]);
 
-    // Offcanvas (hamburger menu) state
+    // Offcanvas (hamburger menu) state TODO: pull this out to a react component
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -514,7 +514,7 @@ export default function Main() {
     const toggleOpen = () => setSettingsOpen(true);
     const toggleClose = () => setSettingsOpen(false);
 
-    // Shared hover handlers for nav links
+    // Shared hover handlers for nav links, could probably pull it out to a react component
     const onLinkHover = (e) => {
         e.currentTarget.style.color = styles.ofLinks.hover.color;
         e.currentTarget.style.backgroundColor =
