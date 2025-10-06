@@ -568,47 +568,9 @@ export default function Main() {
                             }}
                         />
                     ) : (
-                        <span style={{ color: "#9ca3af" }}>
+                        <span style={{ color: "#000" }}>
                             No stimulus available
                         </span>
-                    )}
-                    {/* --- Playback UI & LPC analysis button --- */}
-                    {audioURL && (
-                        <div style={styles.audioPlayer}>
-                            <div
-                                style={{
-                                    fontSize: "0.9rem",
-                                    marginRight: "0.5rem",
-                                    color: "#13120F",
-                                }}
-                            >
-                                2. Hear yourself:
-                            </div>
-                            <audio
-                                controls
-                                src={audioURL}
-                                ref={audioElementRef}
-                                style={{ width: "50%" }}
-                            />
-                            <div
-                                style={{
-                                    marginLeft: "1rem",
-                                    fontSize: "1rem",
-                                    marginTop: "0.25rem",
-                                    color: "#f0ead2",
-                                }}
-                            >
-                                <PlaybackSpeed
-                                    currSpeed={currSpeed}
-                                    onChange={(e) =>
-                                        adjustPlaybackSpeed(
-                                            parseFloat(e.target.value)
-                                        )
-                                    }
-                                    speeds={speeds}
-                                />
-                            </div>
-                        </div>
                     )}
                     <div style={{ margin: "1rem 0" }}>
                         <Button
@@ -662,22 +624,6 @@ export default function Main() {
                     >
                         <canvas ref={canvasRef} className="canvas" />
                     </div>
-                    <div
-                        style={{
-                            marginLeft: "1rem",
-                            fontSize: "1rem",
-                            marginTop: "0.25rem",
-                            color: "#f0ead2",
-                        }}
-                    >
-                        <PlaybackSpeed
-                            currSpeed={currSpeed}
-                            onChange={(e) =>
-                                adjustPlaybackSpeed(parseFloat(e.target.value))
-                            }
-                            speeds={speeds}
-                        />
-                    </div>
                     <Button
                         variant="primary"
                         onClick={startButton}
@@ -694,15 +640,6 @@ export default function Main() {
                                 ref={audioElementRef}
                                 style={{ width: "100%" }}
                             />
-                            <div
-                                style={{
-                                    fontSize: "0.9rem",
-                                    color: "#f0ead2",
-                                    marginTop: "0.5rem",
-                                }}
-                            >
-                                Playback your recording above.
-                            </div>
                             <PlaybackSpeed
                                 currSpeed={currSpeed}
                                 onChange={(e) =>
@@ -712,6 +649,15 @@ export default function Main() {
                                 }
                                 speeds={speeds}
                             />
+                            <div
+                                style={{
+                                    fontSize: "0.9rem",
+                                    color: "#000",
+                                    marginTop: "0.5rem",
+                                }}
+                            >
+                                Playback your recording above.
+                            </div>
                         </div>
                     )}
                 </div>
