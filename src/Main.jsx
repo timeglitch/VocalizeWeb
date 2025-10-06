@@ -346,61 +346,101 @@ export default function Main() {
     useEffect(() => {
         const audioEl = audioElementRef.current;
         if (!audioEl || !audioBuffer) return;
-        const context = audioBuffer;
-        let rafId = null;
-        function updateLPC() {
-            if (!audioEl.paused && !audioEl.ended) {
-                const sr = context.sampleRate;
-                const pos = Math.floor(audioEl.currentTime * sr);
-                const windowSize = 2048;
-                let samples = new Float32Array(windowSize);
-                if (pos + windowSize < context.length) {
-                    samples = context
-                        .getChannelData(0)
-                        .slice(pos, pos + windowSize);
-                } else {
-                    samples = context
-                        .getChannelData(0)
-                        .slice(context.length - windowSize);
-                }
-                const { a, err } = lpc(samples, lpcOrder);
-                if (a) {
-                    setUserAudioLPC(a);
-                } else {
-                    console.log("Playback error, LPC: ", err);
-                }
-                rafId = requestAnimationFrame(updateLPC);
+
+        let lastPos = -1;
+        let cachedLPC = null;
+        let animationId = null;
+
+        const updateLPC = () => {
+            const sr = audioBuffer.sampleRate;
+            const pos = Math.floor(audioEl.currentTime * sr);
+
+            // Skip if we're at the same sample position (avoid redundant calculations)
+            if (pos === lastPos && cachedLPC) {
+                setUserAudioLPC(cachedLPC);
+                return;
             }
-        }
-        const startRaf = () => {
-            if (!rafId) rafId = requestAnimationFrame(updateLPC);
+            lastPos = pos;
+
+            const windowSize = 2048;
+            let samples;
+            if (pos + windowSize < audioBuffer.length) {
+                samples = audioBuffer
+                    .getChannelData(0)
+                    .slice(pos, pos + windowSize);
+            } else {
+                samples = audioBuffer
+                    .getChannelData(0)
+                    .slice(audioBuffer.length - windowSize);
+            }
+            const { a, err } = lpc(samples, lpcOrder);
+            if (a) {
+                cachedLPC = a;
+                setUserAudioLPC(a);
+            } else {
+                console.log("Playback error, LPC: ", err);
+            }
         };
-        const stopRaf = () => {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = null;
+
+        const animate = () => {
+            if (!audioEl.paused && !audioEl.ended) {
+                updateLPC();
+                animationId = requestAnimationFrame(animate);
+            }
         };
-        audioEl.addEventListener("play", startRaf);
-        audioEl.addEventListener("pause", stopRaf);
-        audioEl.addEventListener("ended", stopRaf);
+
+        const handlePlay = () => {
+            animationId = requestAnimationFrame(animate);
+        };
+
+        const handlePause = () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        };
+
+        const handleEnded = () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        };
+
+        // Use timeupdate for scrubbing (when user manually changes position)
+        audioEl.addEventListener("timeupdate", updateLPC);
+        // Use RAF for smooth playback updates
+        audioEl.addEventListener("play", handlePlay);
+        audioEl.addEventListener("pause", handlePause);
+        audioEl.addEventListener("ended", handleEnded);
+
         return () => {
-            updateLPC();
-            stopRaf();
-            audioEl.removeEventListener("play", startRaf);
-            audioEl.removeEventListener("pause", stopRaf);
-            audioEl.removeEventListener("ended", stopRaf);
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            audioEl.removeEventListener("timeupdate", updateLPC);
+            audioEl.removeEventListener("play", handlePlay);
+            audioEl.removeEventListener("pause", handlePause);
+            audioEl.removeEventListener("ended", handleEnded);
         };
-    }, [audioBuffer, lpcOrder, selectedVowel, vowelstimuli]);
+    }, [audioBuffer, lpcOrder]);
 
     /**
      * Update graph when LPC data changes
      */
     useEffect(() => {
-        if (ctxRef.current && canvasRef.current && audioBuffer) {
+        if (ctxRef.current && canvasRef.current) {
+            // Use stimulus sample rate if available, fallback to default
+            let sampleRate = audioBuffer?.sampleRate;
+            if (!sampleRate && (nativeAudioLPC || foreignAudioLPC)) {
+                sampleRate = 44100; // Default sample rate for stimulus files
+            }
+
             drawSpectralEnvelope({
                 lpcCoefficients: userAudioLPC,
                 lpcCoefficients2: nativeAudioLPC,
                 lpcCoefficients3: foreignAudioLPC,
-                sampleRate: audioBuffer.sampleRate,
+                sampleRate: sampleRate,
                 canvasContext: ctxRef.current,
                 vowelStimuli: vowelstimuli,
                 selectedVowel,
