@@ -3,10 +3,7 @@
 
 Created for native English speakers to improve their Spanish vowel pronunication. VOCAL-ize is a play on *vocal*, or *vowel*, in Spanish. ¡Aprendamos!
 
-
-
-
-
+**Access the web version [here](https://vocalize-web-ten.vercel.app/).**
 
 ## Deployment
 
@@ -22,8 +19,6 @@ npm install -g serve
 serve -s build
 ```
 
-**Alternately, you may access the web version at [insertlink.wisc.edu].**
-
 
 ## Demo
 
@@ -35,7 +30,7 @@ We're still working on it!
  - Inspired by the [staRt App](https://www.bitslabstart.com/), developed by the BITS lab at NYU.
  - Thank you to Dr. Tara McAllister for her assistance during the preliminary stages of this project.
 
- - Cool online spectrogram by Robert Agthe  that was helpful here: https://github.com/polarity/app.spectrogram.
+ - Cool online spectrogram by Robert Agthe that was helpful here: https://github.com/polarity/app.spectrogram.
 
 
 ## Support
