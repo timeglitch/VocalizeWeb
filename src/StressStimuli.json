@@ -1,0 +1,606 @@
+    {
+        "version": "1.0",
+        "description": "Vowel stimuli. Formants are from Martínez Celdrán (1995). ",
+        "Stress": {
+            "i": {
+                "ipa": "i",
+                "description": "/i/: Close front unrounded vowel",
+                "formant": {
+                    "f1": [
+                        258,
+                        448
+                    ],
+                    "f2": [
+                        2151,
+                        2687
+                    ],
+                    "f1_low": 258,
+                    "f1_high": 448,
+                    "f2_low": 2151,
+                    "f2_high": 2687
+                },
+                "Word": [
+                    [
+                        "diva",
+                        1
+                    ],
+                    [
+                        "libre",
+                        1
+                    ],
+                    [
+                        "pico",
+                        1
+                    ],
+                    [
+                        "tiza",
+                        1
+                    ],
+                    [
+                        "caminata",
+                        3
+                    ],
+                    [
+                        "girasoles",
+                        1
+                    ],
+                    [
+                        "cariñosa",
+                        3
+                    ],
+                    [
+                        "animal",
+                        2
+                    ]
+                ],
+                "Phrase": [
+                    [
+                        "diva famosa",
+                        1
+                    ],
+                    [
+                        "libre paso",
+                        1
+                    ],
+                    [
+                        "pico largo",
+                        1
+                    ],
+                    [
+                        "tiza blanca",
+                        1
+                    ],
+                    [
+                        "Caminata larga",
+                        3
+                    ],
+                    [
+                        "campo de girasoles",
+                        8
+                    ],
+                    [
+                        "voz cariñosa",
+                        6
+                    ],
+                    [
+                        "animal feliz",
+                        2
+                    ]
+                ],
+                "Sentence": [
+                    [
+                        "La famosa diva canta bien",
+                        9
+                    ],
+                    [
+                        "Dejan totalmente libre su camino",
+                        16
+                    ],
+                    [
+                        "El pájaro muestra un pico largo",
+                        18
+                    ],
+                    [
+                        "Toman la tiza blanca",
+                        8
+                    ],
+                    [
+                        "Sigo una gran caminata larga",
+                        14
+                    ],
+                    [
+                        "Miro siempre ese campo de girasoles",
+                        22
+                    ],
+                    [
+                        "Tiene voz cariñosa",
+                        11
+                    ],
+                    [
+                        "El pequeño animal corre feliz",
+                        11
+                    ]
+                ]
+            },
+            "e": {
+                "ipa": "e",
+                "description": "/e/: Close-mid front unrounded vowel",
+                "formant": {
+                    "f1": [
+                        380,
+                        691
+                    ],
+                    "f2": [
+                        1892,
+                        2462
+                    ],
+                    "f1_low": 380,
+                    "f1_high": 691,
+                    "f2_low": 1892,
+                    "f2_high": 2462
+                },
+                "Word": [
+                    [
+                        "pera",
+                        1
+                    ],
+                    [
+                        "tela",
+                        1
+                    ],
+                    [
+                        "lema",
+                        1
+                    ],
+                    [
+                        "media",
+                        1
+                    ],
+                    [
+                        "delicado",
+                        1
+                    ],
+                    [
+                        "necesario",
+                        3
+                    ],
+                    [
+                        "pesado",
+                        1
+                    ],
+                    [
+                        "celeste",
+                        3
+                    ]
+                ],
+                "Phrase": [
+                    [
+                        "pera dulce",
+                        1
+                    ],
+                    [
+                        "tela suave",
+                        1
+                    ],
+                    [
+                        "lema natal",
+                        1
+                    ],
+                    [
+                        "media limpia",
+                        1
+                    ],
+                    [
+                        "tema delicado",
+                        5
+                    ],
+                    [
+                        "paso necesario",
+                        5
+                    ],
+                    [
+                        "Evento pesado",
+                        7
+                    ],
+                    [
+                        "cielo celeste",
+                        6
+                    ]
+                ],
+                "Sentence": [
+                    [
+                        "Siempre comen una pera dulce",
+                        16
+                    ],
+                    [
+                        "Cose esa tela suave",
+                        8
+                    ],
+                    [
+                        "Hablan sobre este lema natal",
+                        16
+                    ],
+                    [
+                        "Lava toda la media limpia",
+                        11
+                    ],
+                    [
+                        "Comentan un tema delicado",
+                        15
+                    ],
+                    [
+                        "Ese paso técnico es necesario",
+                        19
+                    ],
+                    [
+                        "Organiza bien ese evento pesado",
+                        22
+                    ],
+                    [
+                        "Veo de lejos un cielo celeste",
+                        20
+                    ]
+                ]
+            },
+            "a": {
+                "ipa": "a",
+                "description": "/a/: Open front unrounded vowel",
+                "formant": {
+                    "f1": [
+                        605,
+                        1045
+                    ],
+                    "f2": [
+                        1399,
+                        1780
+                    ],
+                    "f1_low": 605,
+                    "f1_high": 1045,
+                    "f2_low": 1399,
+                    "f2_high": 1780
+                },
+                "Word": [
+                    [
+                        "malo",
+                        1
+                    ],
+                    [
+                        "bata",
+                        1
+                    ],
+                    [
+                        "pato",
+                        1
+                    ],
+                    [
+                        "cama",
+                        1
+                    ],
+                    [
+                        "banana",
+                        5
+                    ],
+                    [
+                        "palabra",
+                        1
+                    ],
+                    [
+                        "caracol",
+                        3
+                    ],
+                    [
+                        "rodilla",
+                        6
+                    ]
+                ],
+                "Phrase": [
+                    [
+                        "niño malo",
+                        5
+                    ],
+                    [
+                        "bata suave",
+                        1
+                    ],
+                    [
+                        "pato blanco",
+                        1
+                    ],
+                    [
+                        "cama nueva",
+                        1
+                    ],
+                    [
+                        "banana madura",
+                        5
+                    ],
+                    [
+                        "palabra sabia",
+                        1
+                    ],
+                    [
+                        "caracol lento",
+                        3
+                    ],
+                    [
+                        "rodilla derecha",
+                        6
+                    ]
+                ],
+                "Sentence": [
+                    [
+                        "Dicen que ese niño resulta malo",
+                        23
+                    ],
+                    [
+                        "Llevo puesta esa bata suave",
+                        15
+                    ],
+                    [
+                        "Miro un pato blanco",
+                        7
+                    ],
+                    [
+                        "Preparo la cama nueva",
+                        10
+                    ],
+                    [
+                        "Como una banana madura",
+                        12
+                    ],
+                    [
+                        "Dice claramente esa palabra sabia",
+                        18
+                    ],
+                    [
+                        "Avanza ese caracol lento",
+                        12
+                    ],
+                    [
+                        "Examinan bien la rodilla derecha",
+                        20
+                    ]
+                ]
+            },
+            "o": {
+                "ipa": "o",
+                "description": "/o/: Close-mid back rounded vowel",
+                "formant": {
+                    "f1": [
+                        395,
+                        725
+                    ],
+                    "f2": [
+                        871,
+                        1460
+                    ],
+                    "f1_low": 395,
+                    "f1_high": 725,
+                    "f2_low": 871,
+                    "f2_high": 1460
+                },
+                "word": [
+                    [
+                        "lobo",
+                        1
+                    ],
+                    [
+                        "poco",
+                        1
+                    ],
+                    [
+                        "goma",
+                        1
+                    ],
+                    [
+                        "roto",
+                        1
+                    ],
+                    [
+                        "domingo",
+                        1
+                    ],
+                    [
+                        "noticia",
+                        1
+                    ],
+                    [
+                        "colina",
+                        1
+                    ],
+                    [
+                        "botella",
+                        1
+                    ]
+                ],
+                "Phrase": [
+                    [
+                        "lobo gris",
+                        1
+                    ],
+                    [
+                        "poco ruido",
+                        1
+                    ],
+                    [
+                        "goma dura",
+                        1
+                    ],
+                    [
+                        "plato roto",
+                        6
+                    ],
+                    [
+                        "día domingo",
+                        4
+                    ],
+                    [
+                        "noticia breve",
+                        1
+                    ],
+                    [
+                        "alta colina",
+                        5
+                    ],
+                    [
+                        "botella sucia",
+                        1
+                    ]
+                ],
+                "Sentence": [
+                    [
+                        "El lobo gris caza",
+                        3
+                    ],
+                    [
+                        "Hay poco ruido",
+                        4
+                    ],
+                    [
+                        "Toca la goma dura",
+                        7
+                    ],
+                    [
+                        "Tiro solo ese plato roto",
+                        17
+                    ],
+                    [
+                        "Salimos el día domingo",
+                        13
+                    ],
+                    [
+                        "Recibe cierta noticia breve",
+                        13
+                    ],
+                    [
+                        "Veo desde lejos una alta colina",
+                        21
+                    ],
+                    [
+                        "Rompo otra botella sucia",
+                        11
+                    ]
+                ]
+            },
+            "u": {
+                "ipa": "u",
+                "description": "/u/: Close back rounded vowel",
+                "formant": {
+                    "f1": [
+                        285,
+                        474
+                    ],
+                    "f2": [
+                        570,
+                        1227
+                    ],
+                    "f1_low": 285,
+                    "f1_high": 474,
+                    "f2_low": 570,
+                    "f2_high": 1227
+                },
+                "Word": [
+                    [
+                        "mudo",
+                        1
+                    ],
+                    [
+                        "lupa",
+                        1
+                    ],
+                    [
+                        "duro",
+                        1
+                    ],
+                    [
+                        "rudo",
+                        1
+                    ],
+                    [
+                        "culebra",
+                        1
+                    ],
+                    [
+                        "cuñada",
+                        1
+                    ],
+                    [
+                        "nublado",
+                        1
+                    ],
+                    [
+                        "buzón",
+                        1
+                    ]
+                ],
+                "Phrase": [
+                    [
+                        "niño mudo",
+                        5
+                    ],
+                    [
+                        "lupa buena",
+                        1
+                    ],
+                    [
+                        "proceso duro",
+                        8
+                    ],
+                    [
+                        "tono rudo",
+                        5
+                    ],
+                    [
+                        "culebra verde",
+                        1
+                    ],
+                    [
+                        "cuñada menor",
+                        1
+                    ],
+                    [
+                        "día nublado",
+                        4
+                    ],
+                    [
+                        "buzón de correo",
+                        1
+                    ]
+                ],
+                "Sentence": [
+                    [
+                        "De pronto, ese niño queda mudo",
+                        22
+                    ],
+                    [
+                        "Tomo la lupa buena",
+                        7
+                    ],
+                    [
+                        "Comenzamos otro proceso duro",
+                        22
+                    ],
+                    [
+                        "Usa siempre ese tono rudo",
+                        18
+                    ],
+                    [
+                        "Vive por aquí la culebra verde",
+                        14
+                    ],
+                    [
+                        "Abrazamos la cuñada menor",
+                        12
+                    ],
+                    [
+                        "Camino durante cualquier día nublado",
+                        26
+                    ],
+                    [
+                        "Buscamos el buzón de correo",
+                        11
+                    ]
+                ]
+            }
+        }
+    }

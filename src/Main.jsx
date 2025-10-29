@@ -78,6 +78,7 @@ export default function Main() {
     const [audioBuffer, setAudioBuffer] = useState(null);
 
     const vowelstimuli = require("./VowelStimuli.json");
+    const stresstimuli = require("./StressStimuli.json");
 
     const [userAudioLPC, setUserAudioLPC] = useState(null);
     const [nativeAudioLPC, setNativeAudioLPC] = useState(null);
@@ -245,7 +246,6 @@ export default function Main() {
         { label: "[o]", value: "o" },
         { label: "[u]", value: "u" },
     ];
-    //add state for module (vowel or stress)
 
     // Add state for submodule
     const [selectedSubmodule, setSelectedSubmodule] = useState(
