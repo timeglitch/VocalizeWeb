@@ -7,6 +7,7 @@ import StressSubmodules from "./StressSubmodules";
 import SubmoduleDropdown from "./SubmoduleDropdown";
 import About from "./About";
 import Layout from "./Layout";
+import Tutorial from "./Tutorial";
 
 export default function App() {
     return (
@@ -16,6 +17,7 @@ export default function App() {
                 <Route path="/modules" element={<Modules />} />
                 <Route path="/main" element={<Main />} />
                 <Route path="/VowelSubmodules" element={<VowelSubmodules />} />
+                <Route path="/Tutorial" element={<Tutorial />} />
                 <Route
                     path="/StressSubmodules"
                     element={<StressSubmodules />}

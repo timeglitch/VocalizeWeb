@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.17.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -10,6 +11,7 @@
     "bootstrap": "^5.3.7",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
+    "react-doc-viewer": "^0.1.15",
     "react-dom": "^19.1.0",
     "react-native-web": "^0.20.0",
     "react-pdf": "^10.2.0",

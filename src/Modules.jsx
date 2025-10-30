@@ -12,6 +12,21 @@ export default function Modules() {
             <Button
                 variant="success"
                 style={styles.button}
+                onClick={() => navigate('/Tutorial')}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.hover.backgroundColor;
+                    e.currentTarget.style.color = styles.button.hover.color;
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = styles.button.backgroundColor;
+                    e.currentTarget.style.color = styles.button.color;
+                }}
+            >
+                Tutorial
+            </Button>
+            <Button
+                variant="success"
+                style={styles.button}
                 onClick={() => navigate('/VowelSubmodules')}
                 onMouseOver={(e) => {
                     e.currentTarget.style.backgroundColor = styles.button.hover.backgroundColor;
