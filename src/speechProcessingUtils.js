@@ -90,7 +90,7 @@ export function lpc(
     return { a, err };
 }
 /**
- * TODO: Cam, where did you get this filter from?
+ * TODO: Cam, where did you get this filter from? Frank, I got it from some research paper. Torturous to implement but seems to work
  *
  * Simple high-pass filter for removing low frequencies.
  * @param {Float32Array} x input signal
@@ -141,7 +141,7 @@ function smoothArray(arr, windowSize = 5) {
 /**
  * Exponential moving average for frame to frame smoothing of frequencies.
  * In other words, reduces jitter.
- * TODO: do we even need this filter?
+ * 
  * @param {Float32Array|null} prev previous frame (null if this is the first frame)
  * @param {Float32Array} curr current frame
  * @param {number} alpha smoothing factor (0-1)
@@ -195,7 +195,6 @@ function drawLPCCurve(
 ) {
     if (!coeffs || coeffs.length < 2) {
         // nothing to draw
-        console.warn("No LPC coefficients to draw");
         return;
     }
 
@@ -286,13 +285,11 @@ function drawLPCCurve(
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     }
-    //console.log("Min dB:", minDb, "Max dB:", maxDb);
     ctx.stroke();
 
     return finalResponse;
 }
 
-//TODO: change colors to match theme
 /**
  * Draws the spectral envelope on the canvas, scaled to 0-5000Hz.
  * Also adds frequency labels to the X-axis.

@@ -30,13 +30,11 @@ export default function StimulusPlayer({
                     .replace("</span>", ""); //TODO: this is cursed
                 const folder = speaker;
                 const url = "/audio/" + folder + "/" + stimTrim + ".wav"; // e.g.: /audio/l1/<file>.wav
-                console.log("Loading wav file:", url);
                 const buffer = await loadWavFile(url, ctx);
                 if (isMounted) {
                     setWavBuffer(buffer);
                     if (wavAudioRef.current) {
                         wavAudioRef.current.src = url;
-                        console.log("Wav file loaded successfully");
                     }
                 }
             } catch (e) {
@@ -145,7 +143,7 @@ export default function StimulusPlayer({
             audioElementRef={wavAudioRef}
             message={
                 "Click play to hear " +
-                (speaker === "l1" ? "L1 Spanish" : "L1 English") +
+                (speaker === "l1" ? "L1 Spanish" : "L2 English") +
                 " audio"
             }
         />

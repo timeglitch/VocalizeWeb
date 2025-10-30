@@ -17,7 +17,6 @@ export function computeSTFT(data, window) {
   let sumWindowed = 0
 
   if (window === undefined || window.length !== N || window === null) {
-    console.log("No valid window provided, defaulting to rectangular window. (src/fft.js)"); //TODO: remove this log
     window = new Float32Array(N) // Default to rectangular window
     window.fill(1)
   }

@@ -121,7 +121,7 @@
                 ],
                 [
                     "cabello liso",
-                    10
+                    9
                 ],
                 [
                     "piso limpio",
@@ -190,7 +190,7 @@
                     11
                 ],
                 [
-                    "Aún está solo el nido vacío.",
+                    "Aún está solo el nido vacío",
                     18
                 ]
             ]
@@ -229,8 +229,8 @@
                     1
                 ],
                 [
-                    "ge",
-                    1
+                    "gue",
+                    2
                 ],
                 [
                     "pe",
@@ -263,7 +263,7 @@
             ],
             "Word": [
                 [
-                    "bello",
+                    "bella",
                     1
                 ],
                 [
@@ -305,8 +305,8 @@
             ],
             "Phrase": [
                 [
-                    "bella cosa",
-                    1
+                    "cosa bella",
+                    6
                 ],
                 [
                     "mesa grande",
@@ -347,44 +347,44 @@
             ],
             "Sentence": [
                 [
-                    "Muestra la bella cosa",
-                    11
+                    "Muestra la cosa bella",
+                    17
                 ],
                 [
-                    "Compramos la mesa grande",
-                    14
+                    "Compramos esa mesa grande",
+                    15
                 ],
                 [
-                    "Miden el peso justo",
-                    10
+                    "Consideran un peso justo",
+                    15
                 ],
                 [
-                    "La leche está en la nevera",
-                    4
+                    "Van por leche fría",
+                    9
                 ],
                 [
-                    "El poema de leña negra",
-                    13
+                    "Usamos leña negra en invierno",
+                    8
                 ],
                 [
                     "Ese techo blanco necesita pintura",
                     5
                 ],
                 [
-                    "Aprenden el tema bueno",
+                    "Aprenden bien el tema bueno",
+                    18
+                ],
+                [
+                    "Noto que su pelo rubio brilla",
                     13
                 ],
                 [
-                    "Tengo pelo rubio",
-                    7
-                ],
-                [
-                    "Escribe una letra clara",
+                    "Escribe con letra clara",
                     13
                 ],
                 [
-                    "Quieres tela cara",
-                    9
+                    "Quieres cierta tela cara",
+                    16
                 ]
             ]
         },
@@ -456,7 +456,7 @@
             ],
             "Word": [
                 [
-                    "pato",
+                    "dama",
                     1
                 ],
                 [
@@ -464,7 +464,7 @@
                     1
                 ],
                 [
-                    "dama",
+                    "pata",
                     1
                 ],
                 [
@@ -540,44 +540,44 @@
             ],
             "Sentence": [
                 [
-                    "Mira la dama linda",
-                    9
+                    "Mira esta dama linda",
+                    11
                 ],
                 [
                     "Cenan en casa blanca",
-                    13
+                    10
                 ],
                 [
                     "La silla tiene una pata rota",
                     20
                 ],
                 [
-                    "La oveja regala lana suave",
-                    17
+                    "Compramos lana suave para tejer",
+                    11
                 ],
                 [
-                    "Leo bajo sol",
-                    5
+                    "Leen juntos bajo sol radiante",
+                    13
                 ],
                 [
-                    "Toma la taza llena",
-                    9
-                ],
-                [
-                    "Nadie está en la sala vacía",
-                    18
-                ],
-                [
-                    "Tiene la mano firme",
+                    "Toma una taza llena",
                     10
                 ],
                 [
-                    "Comemos papas fritas",
-                    9
+                    "Nadie quiere entrar a esa sala vacía",
+                    27
+                ],
+                [
+                    "Extiende su mano firme",
+                    13
+                ],
+                [
+                    "Sirven papa frita en el plato",
+                    8
                 ],
                 [
                     "Veo el mapa mundial",
-                    6
+                    8
                 ]
             ]
         },
@@ -733,40 +733,40 @@
             ],
             "Sentence": [
                 [
-                    "Es solo brillante el diamante",
-                    4
+                    "Tocan un solo brillante",
+                    10
                 ],
                 [
                     "Escuchan una cosa loca",
                     14
                 ],
                 [
-                    "Pinto con rojo claro",
-                    11
+                    "Pinto con color rojo claro",
+                    17
                 ],
                 [
                     "Hay poco tiempo",
                     5
                 ],
                 [
-                    "Está todo listo",
-                    6
+                    "Llego con todo listo",
+                    11
                 ],
                 [
                     "Van en bote gris",
                     8
                 ],
                 [
-                    "Montan en moto rápida",
-                    11
+                    "Monta su moto rápida",
+                    10
                 ],
                 [
-                    "Ese polo es frío",
-                    5
+                    "Eligen ese polo frío",
+                    12
                 ],
                 [
-                    "La gota grande cae al suelo",
-                    4
+                    "Caen muchas gotas grandes del techo",
+                    13
                 ],
                 [
                     "Siempre tomo zumo por la mañana",
@@ -859,7 +859,7 @@
                 ],
                 [
                     "crudo",
-                    1
+                    2
                 ],
                 [
                     "nube",
@@ -879,7 +879,7 @@
                 ],
                 [
                     "chulo",
-                    1
+                    2
                 ]
             ],
             "Phrase": [
@@ -901,7 +901,7 @@
                 ],
                 [
                     "muy crudo",
-                    1
+                    6
                 ],
                 [
                     "nube gris",
@@ -913,20 +913,24 @@
                 ],
                 [
                     "mucha duda",
-                    1
+                    7
                 ],
                 [
                     "puño cerrado",
                     1
                 ],
                 [
-                    "¡qué chulo!",
-                    1
+                    "tan chulo",
+                    6
                 ]
             ],
             "Sentence": [
                 [
-                    "La luna es llena",
+                    "Esperan pura victoria del partido",
+                    9
+                ],
+                [
+                    "La luna llena es linda",
                     4
                 ],
                 [
@@ -934,32 +938,32 @@
                     4
                 ],
                 [
-                    "Queda mudo del choque",
-                    7
+                    "Queda en un mudo total tras el choque",
+                    13
                 ],
                 [
-                    "El pescado está muy crudo",
-                    22
+                    "Comemos pescado crudo del pacífico",
+                    18
                 ],
                 [
-                    "La nube gris cubre el cielo",
+                    "La nube gris cubre ese cielo",
                     4
                 ],
                 [
-                    "El rulo moreno está en su lugar",
-                    4
+                    "Peina su rulo moreno con esmero",
+                    10
                 ],
                 [
-                    "Voy con mucha duda",
-                    9
+                    "Responden con mucha duda",
+                    21
                 ],
                 [
                     "Mueve el puño cerrado",
                     10
                 ],
                 [
-                    "Te dicen ¡qué chulo",
-                    11
+                    "Te dicen qué tan chulo son",
+                    19
                 ]
             ]
         }

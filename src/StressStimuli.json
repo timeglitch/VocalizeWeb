@@ -76,11 +76,11 @@
                     ],
                     [
                         "campo de girasoles",
-                        8
+                        10
                     ],
                     [
                         "voz cariñosa",
-                        6
+                        7
                     ],
                     [
                         "animal feliz",
@@ -90,35 +90,35 @@
                 "Sentence": [
                     [
                         "La famosa diva canta bien",
-                        9
+                        11
                     ],
                     [
                         "Dejan totalmente libre su camino",
-                        16
-                    ],
-                    [
-                        "El pájaro muestra un pico largo",
                         18
                     ],
                     [
-                        "Toman la tiza blanca",
-                        8
-                    ],
-                    [
-                        "Sigo una gran caminata larga",
-                        14
-                    ],
-                    [
-                        "Miro siempre ese campo de girasoles",
+                        "El pájaro muestra un pico largo",
                         22
                     ],
                     [
+                        "Toman la tiza blanca",
+                        10
+                    ],
+                    [
+                        "Sigo una gran caminata larga",
+                        17
+                    ],
+                    [
+                        "Miro siempre ese campo de girasoles",
+                        27
+                    ],
+                    [
                         "Tiene voz cariñosa",
-                        11
+                        13
                     ],
                     [
                         "El pequeño animal corre feliz",
-                        11
+                        13
                     ]
                 ]
             },
@@ -210,35 +210,35 @@
                 "Sentence": [
                     [
                         "Siempre comen una pera dulce",
-                        16
-                    ],
-                    [
-                        "Cose esa tela suave",
-                        8
-                    ],
-                    [
-                        "Hablan sobre este lema natal",
-                        16
-                    ],
-                    [
-                        "Lava toda la media limpia",
-                        11
-                    ],
-                    [
-                        "Comentan un tema delicado",
-                        15
-                    ],
-                    [
-                        "Ese paso técnico es necesario",
                         19
                     ],
                     [
+                        "Cose esa tela suave",
+                        10
+                    ],
+                    [
+                        "Hablan sobre este lema natal",
+                        19
+                    ],
+                    [
+                        "Lava toda la media limpia",
+                        14
+                    ],
+                    [
+                        "Comentan un tema delicado",
+                        13
+                    ],
+                    [
+                        "Ese paso técnico es necesario",
+                        21
+                    ],
+                    [
                         "Organiza bien ese evento pesado",
-                        22
+                        26
                     ],
                     [
                         "Veo de lejos un cielo celeste",
-                        20
+                        23
                     ]
                 ]
             },
@@ -296,7 +296,7 @@
                 "Phrase": [
                     [
                         "niño malo",
-                        5
+                        6
                     ],
                     [
                         "bata suave",
@@ -330,19 +330,19 @@
                 "Sentence": [
                     [
                         "Dicen que ese niño resulta malo",
-                        23
+                        28
                     ],
                     [
                         "Llevo puesta esa bata suave",
-                        15
+                        18
                     ],
                     [
                         "Miro un pato blanco",
-                        7
+                        9
                     ],
                     [
                         "Preparo la cama nueva",
-                        10
+                        12
                     ],
                     [
                         "Como una banana madura",
@@ -350,7 +350,7 @@
                     ],
                     [
                         "Dice claramente esa palabra sabia",
-                        18
+                        21
                     ],
                     [
                         "Avanza ese caracol lento",
@@ -358,7 +358,7 @@
                     ],
                     [
                         "Examinan bien la rodilla derecha",
-                        20
+                        23
                     ]
                 ]
             },
@@ -379,7 +379,7 @@
                     "f2_low": 871,
                     "f2_high": 1460
                 },
-                "word": [
+                "Word": [
                     [
                         "lobo",
                         1
@@ -432,7 +432,7 @@
                     ],
                     [
                         "día domingo",
-                        4
+                        5
                     ],
                     [
                         "noticia breve",
@@ -440,7 +440,7 @@
                     ],
                     [
                         "alta colina",
-                        5
+                        6
                     ],
                     [
                         "botella sucia",
@@ -450,35 +450,35 @@
                 "Sentence": [
                     [
                         "El lobo gris caza",
-                        3
-                    ],
-                    [
-                        "Hay poco ruido",
                         4
                     ],
                     [
+                        "Hay poco ruido",
+                        5
+                    ],
+                    [
                         "Toca la goma dura",
-                        7
+                        9
                     ],
                     [
                         "Tiro solo ese plato roto",
-                        17
+                        23
                     ],
                     [
                         "Salimos el día domingo",
-                        13
+                        16
                     ],
                     [
                         "Recibe cierta noticia breve",
-                        13
+                        15
                     ],
                     [
                         "Veo desde lejos una alta colina",
-                        21
+                        26
                     ],
                     [
                         "Rompo otra botella sucia",
-                        11
+                        12
                     ]
                 ]
             },
@@ -536,7 +536,7 @@
                 "Phrase": [
                     [
                         "niño mudo",
-                        5
+                        6
                     ],
                     [
                         "lupa buena",
@@ -544,11 +544,11 @@
                     ],
                     [
                         "proceso duro",
-                        8
+                        9
                     ],
                     [
                         "tono rudo",
-                        5
+                        6
                     ],
                     [
                         "culebra verde",
@@ -560,7 +560,7 @@
                     ],
                     [
                         "día nublado",
-                        4
+                        5
                     ],
                     [
                         "buzón de correo",
@@ -570,35 +570,35 @@
                 "Sentence": [
                     [
                         "De pronto, ese niño queda mudo",
-                        22
+                        27
                     ],
                     [
                         "Tomo la lupa buena",
-                        7
+                        9
                     ],
                     [
                         "Comenzamos otro proceso duro",
-                        22
+                        25
                     ],
                     [
                         "Usa siempre ese tono rudo",
-                        18
+                        22
                     ],
                     [
                         "Vive por aquí la culebra verde",
-                        14
+                        18
                     ],
                     [
                         "Abrazamos la cuñada menor",
-                        12
+                        14
                     ],
                     [
                         "Camino durante cualquier día nublado",
-                        26
+                        30
                     ],
                     [
                         "Buscamos el buzón de correo",
-                        11
+                        13
                     ]
                 ]
             }

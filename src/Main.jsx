@@ -44,7 +44,6 @@ export default function Main() {
             audioElementRef.current.playbackRate = newRate;
         }
         setCurrSpeed(newRate);
-        console.log("Playback speed set to:", newRate);
     };
 
     //TODO: Make firefox compatible, move this to the beginning of the app so it shows only once
@@ -57,8 +56,6 @@ export default function Main() {
             );
         }
     }, []);
-
-    // TODO: make mobile compatible
 
     const [lpcOrder, setLpc] = useState(45);
     const [rec, setRec] = useState(false);
@@ -79,6 +76,8 @@ export default function Main() {
 
     const vowelstimuli = require("./VowelStimuli.json");
     const stresstimuli = require("./StressStimuli.json");
+    const [showStim, selectStimToShow] = useState(null); // displayed stimulus
+    const [currStimList, setCurrStimList] = useState([]); // active lists
 
     const [userAudioLPC, setUserAudioLPC] = useState(null);
     const [nativeAudioLPC, setNativeAudioLPC] = useState(null);
@@ -195,15 +194,12 @@ export default function Main() {
             setRec(false);
             // --- Stop MediaRecorder ---
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
-                console.log("MediaRecorder state:", mediaRecorder.state);
                 mediaRecorder.stop();
             }
             setMediaRecorder(null);
-            console.log("Audio capture stopped.");
         }
     }
 
-    // TODO: make window a reusable function so it can be drawn twice in stress module
     // main audio processing function
     const processAudio = (e) => {
         const buffer = new Float32Array(analyzer.current.fftSize);
@@ -211,7 +207,6 @@ export default function Main() {
 
         // LPC analysis
         const { a, err } = lpc(buffer, lpcOrder);
-        console.log("Processing audio, live user lpc is ", a);
 
         if (a && a[0] > 0) {
             // basic check to ensure LPC is valid, otherwise don't overwrite previous valid LPC
@@ -255,52 +250,66 @@ export default function Main() {
     const [selectedStimulus, setSelectedStimulus] = useState(null);
     const [stimIndex, setStimIndex] = useState(0); // Global index to keep track of which stimulus to show next
 
-    //update stimulus and graph when vowel changes
+    // Update stimulus and graph when vowel changes
     useEffect(() => {
-        //console.log("Submodule changed to:", selectedSubmodule);
+        const source = moduleType === "Vowel" ? vowelstimuli?.Vowel : stresstimuli?.Stress;
+        const lst = source?.[selectedVowel]?.[selectedSubmodule] ?? [];
+        setCurrStimList(lst);
+        setStimIndex(lst.length);
+    }, [moduleType, selectedVowel, selectedSubmodule]);
 
-        let selectedStimulusIndex =
-            stimIndex %
-            vowelstimuli["Vowel"][selectedVowel][selectedSubmodule].length;
-        let stim =
-            vowelstimuli["Vowel"][selectedVowel][selectedSubmodule][
-                selectedStimulusIndex
-            ];
-        if (!stim) {
+    useEffect(() => {
+        if (selectedSubmodule === "Segment") {
+            setNativeAudioLPC(null);
+            setForeignAudioLPC(null);
+            setCurrStimList([]); // no stimuli
+            setStimIndex(0);
+            selectStimToShow(null);
+        }
+    }, [selectedSubmodule]);
+
+    useEffect(() => {
+        const lst = currStimList;
+        if (lst.length === 0 && selectedSubmodule !== "Segment") {
+            selectStimToShow(null);
             setSelectedStimulus("No stimulus available");
-        } else if (typeof stim === "string") {
-            setSelectedStimulus(stim);
-        } else if (typeof stim === "object" && Array.isArray(stim)) {
-            let hstart;
-            let hend;
-            if (typeof stim[1] === "number") {
-                hstart = stim[1];
-                hend = hstart + 1;
-            } else if (typeof stim[1] === "object" && Array.isArray(stim[1])) {
-                hstart = stim[1][0];
-                hend = stim[1][1];
+            return;
+        } else {
+            const idx = stimIndex % lst.length;
+            selectStimToShow(lst[idx]);
+
+            if (typeof lst[idx] === "string") {
+                setSelectedStimulus(lst[idx]);
+            } else if (Array.isArray(lst[idx]) && typeof lst[idx][0] === "string" && (typeof lst[idx][1] === "number" || Array.isArray(lst[idx][1]))) {
+                let hstart;
+                let hend;
+                if (typeof lst[idx][1] === "number") {
+                    hstart = lst[idx][1];
+                    hend = hstart + 1;
+                } else if (Array.isArray(lst[idx][1]) && lst[idx][1].length >= 2) {
+                    [hstart, hend] = lst[idx][1];
+                }
+                const txt = String(lst[idx][0] || "");
+                setSelectedStimulus(
+                    `${txt.slice(
+                        0,
+                        hstart
+                    )}<span style="background: #ffe066; color: #222; padding: 0 2px;">${txt.slice(
+                        hstart,
+                        hend
+                    )}</span>${txt.slice(hend)}`
+                );
+            } else if (selectedSubmodule === "Segment") {
+                setSelectedStimulus("[" + selectedVowel + "]");
             } else {
                 console.error(
                     "Error: Invalid stimulus format: highlighted segment indexes unrecognized",
-                    stim
+                    lst[idx]
                 );
             }
 
-            setSelectedStimulus(
-                `${stim[0].slice(
-                    0,
-                    hstart
-                )}<span style="background: #ffe066; color: #222; padding: 0 2px;">${stim[0].slice(
-                    hstart,
-                    hend
-                )}</span>${stim[0].slice(hend)}`
-            ); //TODO: injecting the highlighting in this way is probably not the best way, but it works for now
-        } else {
-            setSelectedStimulus(
-                "Error: Invalid stimulus format" + JSON.stringify(stim)
-            );
-        }
 
+        }
         // Update the canvas by restarting the audio capture if running
         if (audioCtx.current) {
             stopCapture();
@@ -316,7 +325,7 @@ export default function Main() {
             onlyDrawAxes: true,
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVowel, stimIndex, selectedSubmodule, vowelstimuli]);
+    }, [currStimList, stimIndex, selectedVowel]);
 
     // Update submodule if URL changes
     const handlePopState = useCallback(() => {
@@ -472,15 +481,6 @@ export default function Main() {
     const toggleOpen = () => setSettingsOpen(true);
     const toggleClose = () => setSettingsOpen(false);
 
-    // TODO come up with a better way to do this
-    function minorText() {
-        if (moduleType === "Vowel") {
-            return "1. Hear the L1 Spanish speaker:";
-        } else {
-            return "1. Hear the L1 English speaker:";
-        }
-    }
-
     // Shared hover handlers for nav links
     const onLinkHover = (e) => {
         e.currentTarget.style.color = styles.ofLinks.hover.color;
@@ -491,13 +491,19 @@ export default function Main() {
         e.currentTarget.style.color = styles.ofLinks.color;
         e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
     };
-    const submodulesList = [
-        "Segment",
-        "Syllable",
-        "Word",
-        "Phrase",
-        "Sentence",
-    ];
+    const submodulesList = moduleType === "Vowel"
+        ? [
+            "Segment",
+            "Syllable",
+            "Word",
+            "Phrase",
+            "Sentence",
+        ]
+        : [
+            "Word",
+            "Phrase",
+            "Sentence",
+        ];
 
     return (
         <div className="main-container" style={{ backgroundColor: "#F2F1EB" }}>
@@ -613,23 +619,40 @@ export default function Main() {
                         </span>
                     )}
                     <div style={{ margin: "1rem 0" }}>
-                        <Button
-                            style={{ ...styles.buttons, fontWeight: "bold" }}
-                            onClick={() => {
-                                setStimIndex(stimIndex + 1);
-                                console.log("Next stimulus loaded");
-                            }} // Increment stimIndex to get next stimulus
-                        >
-                            Next
-                        </Button>
+                        {selectedSubmodule !== "Segment" && (
+                            <>
+                                <Button
+                                    style={{ ...styles.buttons, fontWeight: "bold" }}
+                                    onClick={() => {
+                                        setStimIndex(stimIndex + 1);
+                                    }} // Increment stimIndex to get next stimulus
+                                >
+                                    Next
+                                </Button>
+                            </>
+                        )}
                     </div>
-                    <StimulusPlayer
-                        selectedStimulus={selectedStimulus}
-                        speaker="l1"
-                        lpcOrder={lpcOrder}
-                        onLpcUpdate={handleNativeLpcUpdate}
-                        currSpeed={currSpeed}
-                    />
+
+                    {selectedSubmodule !== "Segment" && moduleType === "Vowel" && (
+                        <>
+                            <StimulusPlayer
+                                selectedStimulus={selectedStimulus}
+                                speaker="l1"
+                                lpcOrder={lpcOrder}
+                                onLpcUpdate={handleNativeLpcUpdate}
+                                currSpeed={currSpeed}
+                            />
+                        </>
+                    )}
+                    {moduleType === "Stress" && (
+                        <StimulusPlayer
+                            selectedStimulus={selectedStimulus}
+                            speaker="l1"
+                            lpcOrder={lpcOrder}
+                            onLpcUpdate={setForeignAudioLPC}
+                            currSpeed={currSpeed}
+                        />
+                    )}
                     {moduleType === "Stress" && (
                         <StimulusPlayer
                             selectedStimulus={selectedStimulus}
@@ -639,7 +662,8 @@ export default function Main() {
                             currSpeed={currSpeed}
                         />
                     )}
-                    {/* <StimulusBar src={wavAudioRef.current?.src} audioElementRef={wavAudioRef} /> */}
+
+
                     <div
                         className="vowel-selector"
                         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
