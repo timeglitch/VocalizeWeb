@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import "./App.css";
+import l1variation from "./assets/L1 Variation About Page Blurb.pdf";
 
 export default function About() {
     const navigate = useNavigate();
@@ -15,8 +16,8 @@ export default function About() {
                     recording, and spectral envelope visualization.
                 </p>
                 <p>
-                    Thanks to our volunteers for providing stimulus audio. We
-                    are working on adding more stimuli and features, to better
+                    Thanks to our volunteers for providing stimulus audios. We
+                    are working on adding more stimuli and features to better
                     capture variation in Spanish and improve usability.
                 </p>
                 <p>
@@ -77,6 +78,23 @@ export default function About() {
                         vowel reduction, and provides tutorials on acoustic
                         features. The app will be piloted with a small group of
                         learners.
+                    </div>
+                </details>
+                <details>
+                    <summary style={{ cursor: "pointer", fontWeight: "bold" }}>
+                        On L1 Variation
+                    </summary>
+                    <div style={{ marginTop: "1rem" }}>
+                        <object
+                            data={l1variation}
+                            type="application/pdf"
+                            width="100%"
+                            height="600px"
+                        >
+                            <p>
+                                PDF preview not available.<a href={l1variation} target="_blank" rel="noopener noreferrer">Open or download the PDF</a>.
+                            </p>
+                        </object>
                     </div>
                 </details>
             </div>
