@@ -143,7 +143,7 @@ export default function StimulusPlayer({
             audioElementRef={wavAudioRef}
             message={
                 "Click play to hear " +
-                (speaker === "l1" ? "L1 Spanish" : "L2 English") +
+                (speaker === "l1" ? "L1 Spanish" : "L1 English") +
                 " audio"
             }
         />
