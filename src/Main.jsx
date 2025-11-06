@@ -76,6 +76,7 @@ export default function Main() {
 
     const vowelstimuli = require("./VowelStimuli.json");
     const stresstimuli = require("./StressStimuli.json");
+    // eslint-disable-next-line
     const [showStim, selectStimToShow] = useState(null); // displayed stimulus
     const [currStimList, setCurrStimList] = useState([]); // active lists
 
@@ -256,25 +257,20 @@ export default function Main() {
         const lst = source?.[selectedVowel]?.[selectedSubmodule] ?? [];
         setCurrStimList(lst);
         setStimIndex(lst.length);
+        // eslint-disable-next-line
     }, [moduleType, selectedVowel, selectedSubmodule]);
 
     useEffect(() => {
-        if (selectedSubmodule === "Segment") {
-            setNativeAudioLPC(null);
-            setForeignAudioLPC(null);
-            setCurrStimList([]); // no stimuli
-            setStimIndex(0);
-            selectStimToShow(null);
-        }
-    }, [selectedSubmodule]);
-
-    useEffect(() => {
         const lst = currStimList;
-        if (lst.length === 0 && selectedSubmodule !== "Segment") {
+        if (lst.length === 0) {
             selectStimToShow(null);
             setSelectedStimulus("No stimulus available");
             return;
         } else {
+            if (lst.length === 1) {
+                setStimIndex(0);
+                selectStimToShow(lst[0]); // basically what segments do
+            }
             const idx = stimIndex % lst.length;
             selectStimToShow(lst[idx]);
 
@@ -633,7 +629,7 @@ export default function Main() {
                         )}
                     </div>
 
-                    {selectedSubmodule !== "Segment" && moduleType === "Vowel" && (
+                    {moduleType === "Vowel" && (
                         <>
                             <StimulusPlayer
                                 selectedStimulus={selectedStimulus}

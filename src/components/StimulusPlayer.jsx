@@ -27,7 +27,7 @@ export default function StimulusPlayer({
                         /<span style="background: #ffe066; color: #222; padding: 0 2px;">/g,
                         ""
                     )
-                    .replace("</span>", ""); //TODO: this is cursed
+                    .replace("</span>", ""); // TODO: this is cursed (too bad, it works!)
                 const folder = speaker;
                 const url = "/audio/" + folder + "/" + stimTrim + ".wav"; // e.g.: /audio/l1/<file>.wav
                 const buffer = await loadWavFile(url, ctx);
