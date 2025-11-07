@@ -16,7 +16,7 @@ export default function About() {
                     recording, and spectral envelope visualization.
                 </p>
                 <p>
-                    Thanks to our volunteers for providing stimulus audios. We
+                    Thank you to our volunteers for providing stimulus audios. We
                     are working on adding more stimuli and features to better
                     capture variation in Spanish and improve usability.
                 </p>
@@ -96,6 +96,25 @@ export default function About() {
                             </p>
                         </object>
                     </div>
+                </details>
+                <details>
+                    <summary style={{ cursor: "pointer", fontWeight: "bold" }}>
+                        About the Team
+                    </summary>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        <p>
+                            <strong>Frank Zhang</strong> is an
+                            IT Support Engineer at Marin Tech Group. He holds a B.S. in Compupter Science and Linguistics
+                            from the University of Wisconsin-Madison. In his free time, he enjoys crypto trading, online E-Sports betting
+                            (he is ranked Bronze in Valorant),
+                            and larping.
+                        </p>
+                        <p>
+                            <strong>Camden Zhu</strong> is senior studying Computer Science and Linguistics 
+                            at the University of Wisconsin-Madison. In her free time, she enjoys producing indie pop in FL Studio,
+                            trying new matchas, and reading neofeminist literature.
+                        </p>
+                        </div>
                 </details>
             </div>
             <div>
