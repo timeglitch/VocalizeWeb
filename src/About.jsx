@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import "./App.css";
 import l1variation from "./assets/L1 Variation About Page Blurb.pdf";
 
@@ -16,8 +16,8 @@ export default function About() {
                     recording, and spectral envelope visualization.
                 </p>
                 <p>
-                    Thank you to our volunteers for providing stimulus audios. We
-                    are working on adding more stimuli and features to better
+                    Thank you to our volunteers for providing stimulus audios.
+                    We are working on adding more stimuli and features to better
                     capture variation in Spanish and improve usability.
                 </p>
                 <p>
@@ -92,7 +92,15 @@ export default function About() {
                             height="600px"
                         >
                             <p>
-                                PDF preview not available.<a href={l1variation} target="_blank" rel="noopener noreferrer">Open or download the PDF</a>.
+                                PDF preview not available.
+                                <a
+                                    href={l1variation}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open or download the PDF
+                                </a>
+                                .
                             </p>
                         </object>
                     </div>
@@ -103,18 +111,21 @@ export default function About() {
                     </summary>
                     <div style={{ marginTop: "0.5rem" }}>
                         <p>
-                            <strong>Frank Zhang</strong> is an
-                            IT Support Engineer at Marin Tech Group. He holds a B.S. in Compupter Science and Linguistics
-                            from the University of Wisconsin-Madison. In his free time, he enjoys crypto trading, online E-Sports betting
-                            (he is ranked Bronze in Valorant),
-                            and larping.
+                            <strong>Frank Zhang</strong> is an IT Support
+                            Engineer at Marin Tech Group. He holds a B.S. in
+                            Compupter Science and Linguistics from the
+                            University of Wisconsin-Madison. In his free time,
+                            he enjoys crypto trading, online E-Sports betting
+                            (he is ranked Bronze in Valorant), and larping.
                         </p>
                         <p>
-                            <strong>Camden Zhu</strong> is senior studying Computer Science and Linguistics 
-                            at the University of Wisconsin-Madison. In her free time, she enjoys producing indie pop in FL Studio,
-                            trying new matchas, and reading neofeminist literature.
+                            <strong>Camden Zhu</strong> is senior studying
+                            Computer Science and Linguistics at the University
+                            of Wisconsin-Madison. In her free time, she enjoys
+                            producing indie pop in FL Studio, trying new
+                            matchas, and reading neofeminist literature.
                         </p>
-                        </div>
+                    </div>
                 </details>
             </div>
             <div>

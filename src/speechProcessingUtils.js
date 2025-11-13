@@ -141,7 +141,7 @@ function smoothArray(arr, windowSize = 5) {
 /**
  * Exponential moving average for frame to frame smoothing of frequencies.
  * In other words, reduces jitter.
- * 
+ *
  * @param {Float32Array|null} prev previous frame (null if this is the first frame)
  * @param {Float32Array} curr current frame
  * @param {number} alpha smoothing factor (0-1)
@@ -204,7 +204,7 @@ function drawLPCCurve(
     const applyBandwidthExpand = opts.applyBandwidthExpand || false;
     const bwHz = opts.bwHz || 60;
     const maxFreq = opts.maxFreq || DEFAULT_MAX_FREQ;
-    const usefft = opts.fft || false;
+    //const usefft = opts.fft || false; // We don't use FFT-based LPC drawing for now, but could add later
 
     // Calculate and Draw LPC Curve in dB
     ctx.strokeStyle = color;

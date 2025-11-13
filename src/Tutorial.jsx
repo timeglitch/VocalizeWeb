@@ -1,4 +1,4 @@
-import tutorial from "./assets/VOCAL-ize Tutorial.pdf";
+//import tutorial from "./assets/VOCAL-ize Tutorial.pdf"; //we don't use pdf anymore, but we can keep it as a backup if the onedrive link dies
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { StyleSheet } from "react-native";
