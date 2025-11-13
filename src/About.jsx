@@ -113,7 +113,7 @@ export default function About() {
                         {/* Annika */}
                         <div style={styles.member}>
                             <img
-                                src="images/annika.jpg"
+                                src="images/annika.JPG"
                                 alt="Annika Brody Wallander"
                                 style={styles.avatar}
                             />
@@ -156,7 +156,7 @@ export default function About() {
                         {/* Frank */}
                         <div style={styles.member}>
                             <img
-                                src="images/frank.jpg"
+                                src="images/frank.JPG"
                                 alt="Frank Zhang"
                                 style={styles.avatar}
                             />
@@ -177,7 +177,7 @@ export default function About() {
                         {/* Camden */}
                         <div style={styles.member}>
                             <img
-                                src="images/camden.jpg"
+                                src="images/camden.JPG"
                                 alt="Camden Zhu"
                                 style={styles.avatar}
                             />
