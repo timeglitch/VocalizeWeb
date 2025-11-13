@@ -110,21 +110,88 @@ export default function About() {
                         About the Team
                     </summary>
                     <div style={{ marginTop: "0.5rem" }}>
-                        <p>
-                            <strong>Frank Zhang</strong> is an IT Support
-                            Engineer at Marin Tech Group. He holds a B.S. in
-                            Compupter Science and Linguistics from the
-                            University of Wisconsin-Madison. In his free time,
-                            he enjoys crypto trading, online E-Sports betting
-                            (he is ranked Bronze in Valorant), and larping.
-                        </p>
-                        <p>
-                            <strong>Camden Zhu</strong> is senior studying
-                            Computer Science and Linguistics at the University
-                            of Wisconsin-Madison. In her free time, she enjoys
-                            producing indie pop in FL Studio, trying new
-                            matchas, and reading neofeminist literature.
-                        </p>
+                        {/* Annika */}
+                        <div style={styles.member}>
+                            <img
+                                src="/images/annika.jpg"
+                                alt="Annika Brody Wallander"
+                                style={styles.avatar}
+                            />
+                            <div style={styles.memberText}>
+                                <p>
+                                    <strong>Annika Brody Wallander</strong> is a
+                                    doctoral candidate in Spanish Linguistics.
+                                    She holds a BS in Biology and Spanish from
+                                    St. Norbert College (2019). She studied at
+                                    La Fundación José Ortega y Gasset – Gregorio
+                                    Marañón in Toledo, Spain in 2018, and served
+                                    as a Cultural Ambassador in the North
+                                    American Cultural Ambassadors program in a
+                                    primary school in El Ejido, Spain 2019-2020.
+                                    She graduated with her Master’s degree in
+                                    Spanish Linguistics from UW Madison in May
+                                    2022. Her research interests include the
+                                    intersections between second language
+                                    acquisition, acoustic phonetics and
+                                    phonology in Spanish, bilingual identity and
+                                    technology-enhanced pronunciation learning.
+                                    Her dissertation research explores how
+                                    students’ explicit learning of Spanish
+                                    pronunciation and speech features through
+                                    technology shapes their speech development
+                                    and how it is shaped by and shapes their
+                                    bilingual goals and motivation in acquiring
+                                    Spanish as a second language. By integrating
+                                    technology into her work, her primary goal
+                                    in research is to develop innovative
+                                    language learning strategies that support
+                                    Spanish learning, foster students’ ability
+                                    to explore their bilingual identity, and
+                                    ultimately create opportunities for Spanish
+                                    learning both in and out of the classroom.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Frank */}
+                        <div style={styles.member}>
+                            <img
+                                src="/images/frank.jpg"
+                                alt="Frank Zhang"
+                                style={styles.avatar}
+                            />
+                            <div style={styles.memberText}>
+                                <p>
+                                    <strong>Frank Zhang</strong> is an IT
+                                    Engineer at 1X Technologies with Marin Tech
+                                    Group. He holds a B.S. in Computer Science
+                                    and Linguistics from the University of
+                                    Wisconsin-Madison. In his free time, he
+                                    enjoys historical fencing, playing the
+                                    domra, and pretending to read
+                                    psycholinguistics papers.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Camden */}
+                        <div style={styles.member}>
+                            <img
+                                src="/images/camden.jpg"
+                                alt="Camden Zhu"
+                                style={styles.avatar}
+                            />
+                            <div style={styles.memberText}>
+                                <p>
+                                    <strong>Camden Zhu</strong> is senior
+                                    studying Computer Science and Linguistics at
+                                    the University of Wisconsin-Madison. In her
+                                    free time, she enjoys producing indie pop in
+                                    FL Studio, trying new matchas, and reading
+                                    neofeminist literature.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </details>
             </div>
@@ -176,6 +243,22 @@ const styles = StyleSheet.create({
         fontSize: "1.1rem",
         lineHeight: 1.6,
         marginBottom: "2rem",
+    },
+    /* new styles */
+    member: {
+        display: "flex",
+        alignItems: "flex-start",
+        marginBottom: "1rem",
+    },
+    avatar: {
+        width: 64,
+        height: 64,
+        borderRadius: "50%",
+        objectFit: "cover",
+        marginRight: "1rem",
+    },
+    memberText: {
+        flex: 1,
     },
     button: {
         fontSize: "1.25rem",
