@@ -185,11 +185,10 @@ export default function About() {
                                 <p>
                                     <strong>Camden Zhu</strong> is senior
                                     studying Computer Science and Linguistics at
-                                    the University of Wisconsin-Madison. In her
-                                    free time, she enjoys producing indie pop in
-                                    FL Studio, trying new matchas, and reading
-                                    neofeminist literature.
-                                </p>
+                                    the University of Wisconsin-Madison. In her free time,
+                                    she enjoys writing (fanfiction), night runs, 
+                                    and actually reading psycholinguistics papers.
+                                    </p>
                             </div>
                         </div>
                     </div>
