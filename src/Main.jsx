@@ -253,7 +253,8 @@ export default function Main() {
 
     // Update stimulus and graph when vowel changes
     useEffect(() => {
-        const source = moduleType === "Vowel" ? vowelstimuli?.Vowel : stresstimuli?.Stress;
+        const source =
+            moduleType === "Vowel" ? vowelstimuli?.Vowel : stresstimuli?.Stress;
         const lst = source?.[selectedVowel]?.[selectedSubmodule] ?? [];
         setCurrStimList(lst);
         setStimIndex(lst.length);
@@ -276,13 +277,20 @@ export default function Main() {
 
             if (typeof lst[idx] === "string") {
                 setSelectedStimulus(lst[idx]);
-            } else if (Array.isArray(lst[idx]) && typeof lst[idx][0] === "string" && (typeof lst[idx][1] === "number" || Array.isArray(lst[idx][1]))) {
+            } else if (
+                Array.isArray(lst[idx]) &&
+                typeof lst[idx][0] === "string" &&
+                (typeof lst[idx][1] === "number" || Array.isArray(lst[idx][1]))
+            ) {
                 let hstart;
                 let hend;
                 if (typeof lst[idx][1] === "number") {
                     hstart = lst[idx][1];
                     hend = hstart + 1;
-                } else if (Array.isArray(lst[idx][1]) && lst[idx][1].length >= 2) {
+                } else if (
+                    Array.isArray(lst[idx][1]) &&
+                    lst[idx][1].length >= 2
+                ) {
                     [hstart, hend] = lst[idx][1];
                 }
                 const txt = String(lst[idx][0] || "");
@@ -303,8 +311,6 @@ export default function Main() {
                     lst[idx]
                 );
             }
-
-
         }
         // Update the canvas by restarting the audio capture if running
         if (audioCtx.current) {
@@ -487,19 +493,10 @@ export default function Main() {
         e.currentTarget.style.color = styles.ofLinks.color;
         e.currentTarget.style.backgroundColor = styles.ofLinks.backgroundColor;
     };
-    const submodulesList = moduleType === "Vowel"
-        ? [
-            "Segment",
-            "Syllable",
-            "Word",
-            "Phrase",
-            "Sentence",
-        ]
-        : [
-            "Word",
-            "Phrase",
-            "Sentence",
-        ];
+    const submodulesList =
+        moduleType === "Vowel"
+            ? ["Segment", "Syllable", "Word", "Phrase", "Sentence"]
+            : ["Word", "Phrase", "Sentence"];
 
     return (
         <div className="main-container" style={{ backgroundColor: "#F2F1EB" }}>
@@ -592,7 +589,7 @@ export default function Main() {
                 </Offcanvas>
 
                 <h1 className="header" style={styles.header}>
-                    Practice
+                    {moduleType} Practice
                 </h1>
                 {/* Show selected submodule */}
                 <div style={styles.submodule}>
@@ -618,7 +615,10 @@ export default function Main() {
                         {selectedSubmodule !== "Segment" && (
                             <>
                                 <Button
-                                    style={{ ...styles.buttons, fontWeight: "bold" }}
+                                    style={{
+                                        ...styles.buttons,
+                                        fontWeight: "bold",
+                                    }}
                                     onClick={() => {
                                         setStimIndex(stimIndex + 1);
                                     }} // Increment stimIndex to get next stimulus
@@ -628,7 +628,6 @@ export default function Main() {
                             </>
                         )}
                     </div>
-
                     {moduleType === "Vowel" && (
                         <>
                             <StimulusPlayer
@@ -658,8 +657,6 @@ export default function Main() {
                             currSpeed={currSpeed}
                         />
                     )}
-
-
                     <div
                         className="vowel-selector"
                         style={{ marginTop: "0.5rem", marginBottom: "1rem" }}
