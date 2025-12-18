@@ -644,7 +644,7 @@ export default function Main() {
                             selectedStimulus={selectedStimulus}
                             speaker="l1"
                             lpcOrder={lpcOrder}
-                            onLpcUpdate={setForeignAudioLPC}
+                            onLpcUpdate={setNativeAudioLPC}
                             currSpeed={currSpeed}
                         />
                     )}
