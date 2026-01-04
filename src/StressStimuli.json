@@ -501,10 +501,6 @@
                 },
                 "Word": [
                     [
-                        "mudo",
-                        1
-                    ],
-                    [
                         "lupa",
                         1
                     ],
@@ -535,10 +531,6 @@
                 ],
                 "Phrase": [
                     [
-                        "niño mudo",
-                        6
-                    ],
-                    [
                         "lupa buena",
                         1
                     ],
@@ -568,10 +560,6 @@
                     ]
                 ],
                 "Sentence": [
-                    [
-                        "De pronto, ese niño queda mudo",
-                        27
-                    ],
                     [
                         "Tomo la lupa buena",
                         9
