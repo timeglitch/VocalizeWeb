@@ -54,7 +54,7 @@ export default function About() {
                         Despite many gaps in pronunciation teaching in current
                         Spanish classrooms (Counselman, 2015; Offerman, 2024),
                         visual acoustic feedback (VF) has been used to address
-                        vowel learning challenges in both L2 English (Dowd et
+                        vowel learning challenges in both L2 French and Danish (Dowd et
                         al., 1998; Kartushina et al., 2015) and L2 Spanish
                         (Olson & Offerman, 2021). VF helps learners enhance
                         their pronunciation through real-time or delayed visual
@@ -163,8 +163,7 @@ export default function About() {
                             <div style={styles.memberText}>
                                 <p>
                                     <strong>Frank Zhang</strong> is an IT
-                                    Engineer at 1X Technologies with Marin Tech
-                                    Group. He holds a B.S. in Computer Science
+                                    Engineer at 1X Tech. He holds a B.S. in Computer Science
                                     and Linguistics from the University of
                                     Wisconsin-Madison. In his free time, he
                                     enjoys historical fencing, playing the
