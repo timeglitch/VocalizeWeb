@@ -3,7 +3,7 @@
 
 Created for native English speakers to improve their Spanish vowel pronunication. VOCAL-ize is a play on *vocal*, or *vowel*, in Spanish. ¡Aprendamos!
 
-**Access the web version [here](https://vocalize-web-ten.vercel.app/).**
+**Access the web version [here](https://vocal-ize.org/).**
 
 ## Deployment
 
@@ -35,7 +35,7 @@ We're still working on it!
 
 ## Support
 
-For support, email [Cam](cxzhu@wisc.edu) or [Frank](frankj.zhang@gmail.com). 
+For support, email [Cam](tinzhu7@gmail.com) or [Frank](frankj.zhang@gmail.com). 
 
 ## License
 
